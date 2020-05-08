@@ -1,0 +1,1058 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>设备版本状态</title>
+    <link href="../../css/element.css" rel="stylesheet" />
+    <link href="../../css/style.css" rel="stylesheet" />
+    <script src="../../scripts/vue.js"></script>
+    <script src="../../scripts/element.js"></script>
+    <script src="../../scripts/jquery.min.js"></script>
+    <script src="../../scripts/i18n/zh-CN.js"></script>
+    <script src="../../scripts/i18n/en.js"></script>
+    <script src="../i18n/en.js"></script>
+    <script src="../i18n/zh-CN.js"></script>
+    <script src="../../scripts/polyfill.min.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/errorCode.js"></script>
+    <script src="../../scripts/lodash.min.js"></script>
+    <script src="js/rest.js"></script>
+    <script src="../upgradePlan/js/serverTable.js"></script>
+    <script src="../upgradePlan/js/managerTable.js"></script>
+    <script src="../upgradePlan/js/switchTable.js"></script>
+    <script src="../upgradePlan/js/fanTable.js"></script>
+    <script src="js/deviceVersion.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        body {
+            min-width: 900px;
+        }
+
+        /* 部署的下拉搜索框 */
+        .input-with-select {
+            display: inline-block;
+            position: relative;
+        }
+
+        .input-with-select .el-select .el-input {
+            width: 130px;
+        }
+
+        .demo-table-expand {
+            font-size: 0;
+        }
+
+        .demo-table-expand label {
+            width: 120px;
+            color: #99a9bf;
+        }
+
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 50%;
+        }
+
+        .el-progress-bar {
+            padding-right: 60px;
+            margin-left: -20px;
+        }
+
+        .map-row {
+            padding: 15px;
+            background: #f6f7f8;
+            margin: 15px 0;
+        }
+
+        .search-row .el-button {
+            vertical-align: middle;
+        }
+
+        .search-row .el-input-group {
+            vertical-align: middle;
+        }
+
+        .desLength {
+            position: absolute;
+            bottom: 0px;
+            left: 340px;
+            color: #999;
+            width: 50px;
+            text-align: right;
+        }
+
+        .moudle_table_header {
+            display: none;
+        }
+
+        .row-expand-cover .el-table__expand-column .el-table__expand-icon {
+            display: none;
+        }
+
+        .hide-padding+tr .el-table__expanded-cell {
+            padding: 0;
+            padding-left: 55px;
+            border: none;
+        }
+
+        .type_sucess {
+            color: #5CCBB1;
+        }
+
+        .type_warn {
+            color: #ffbb33;
+        }
+
+        .type_critical {
+            color: #e27777;
+        }
+
+        .el-popover {
+            text-align: left;
+        }
+
+        /**设备版本状态样式**/
+        .com-severity-bg-ToTakeEffect {
+            background-color: #C4E2A5;
+        }
+
+        .com-severity-bg-Activing {
+            background-color: #94CC5C;
+        }
+
+        .com-severity-bg-PartialActiveSuccess {
+            background-color: #94DCCC;
+        }
+
+        .com-severity-bg-Actived {
+            background-color: #5CCBB1;
+        }
+
+        .com-severity-bg-ToUpgrade {
+            background-color: #85CCFF;
+        }
+
+        .com-severity-bg-Upgrading {
+            background-color: #4EAFF5;
+        }
+
+        .com-severity-bg-NoActive {
+            background-color: #B5DB8E;
+        }
+
+        .com-severity-bg-ActiveFail {
+            background-color: #7E82E6;
+        }
+
+        .com-severity-bg-PartialUpgradeSuccess {
+            background-color: #FFBB33;
+        }
+
+        .com-severity-bg-UpgradeFail {
+            background-color: #FF4C4C;
+        }
+
+        .com-severity-bg-NoUpgrade {
+            background-color: #E6E6E6;
+            color: #999999 !important;
+        }
+
+        .com-severity-bg-ToTakeEffect,
+        .com-severity-bg-Activing,
+        .com-severity-bg-PartialActiveSuccess,
+        .com-severity-bg-Actived,
+        .com-severity-bg-ToUpgrade,
+        .com-severity-bg-Upgrading,
+        .com-severity-bg-NoActive,
+        .com-severity-bg-ActiveFail,
+        .com-severity-bg-PartialUpgradeSuccess,
+        .com-severity-bg-UpgradeFail,
+        .com-severity-bg-NoUpgrade {
+            display: inline-block;
+            color: #ffffff;
+            text-align: center;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 13px;
+            overflow: hidden;
+            vertical-align: middle;
+        }
+
+        /**设备版本状态样式**/
+        .com-required-ToTakeEffect {
+            color: #C4E2A5;
+        }
+
+        .com-required-Activing {
+            color: #94CC5C;
+        }
+
+        .com-required-PartialActiveSuccess {
+            color: #94DCCC;
+        }
+
+        .com-required-Actived {
+            color: #5CCBB1;
+        }
+
+        .com-required-ToUpgrade {
+            color: #85CCFF;
+        }
+
+        .com-required-Upgrading {
+            color: #4EAFF5;
+        }
+
+        .com-required-NoActive {
+            color: #B5DB8E;
+        }
+
+        .com-required-ActiveFail {
+            color: #7E82E6;
+        }
+
+        .com-required-PartialUpgradeSuccess {
+            color: #FFBB33;
+        }
+
+        .com-required-UpgradeFail {
+            color: #FF4C4C;
+        }
+
+        .com-required-NoUpgrade {
+            color: #dddddd;
+        }
+
+        .com-required-ToTakeEffect,
+        .com-required-Activing,
+        .com-required-PartialActiveSuccess,
+        .com-required-Actived,
+        .com-required-ToUpgrade,
+        .com-required-Upgrading,
+        .com-required-NoActive,
+        .com-required-ActiveFail,
+        .com-required-PartialUpgradeSuccess,
+        .com-required-UpgradeFail,
+        .com-required-NoUpgrade {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 12px
+        }
+
+        /*
+        *@params2 正常/健康/在线/已启用/已使用/已分配/成功：背景色#3dcda6 字体颜色#ffffff
+         @modify: 2020/03/24 DTS2020030908013 和vCentorForFD 样式保持一致
+        */
+        .com-severity-bg-Critical::before,
+        .com-severity-bg-OK::before,
+        .com-severity-bg-progressing::before,
+        .com-severity-bg-locked::before,
+        .com-severity-bg-takingEffect::before,
+        .com-severity-bg-Warning::before,
+        .com-severity-bg-Offline::before,
+        .com-severity-bg-partially-success::before,
+        .com-readOnly-bg::before,
+        .com-severity-bg-wait::before,
+        .com-severity-bg-progressing::before,
+        .com-severity-bg-statusReady::before,
+        .com-severity-bg-Adding::before,
+        .com-severity-bg-locked::before,
+        .com-severity-bg-statusUnmanaged::before {
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            margin-right: 10px;
+            content: '';
+            display: inline-block;
+        }
+
+        /*
+        *@params0 正常：背景色#e54545
+        */
+        .com-severity-bg-OK::before {
+            background-color: #66D1B5;
+        }
+
+        /*
+        *@params1 紧急/故障/高危/失败：背景色#e54545
+        */
+        .com-severity-bg-Critical::before {
+            background-color: #e54545;
+        }
+
+        /*
+        * @params3 警告：背景色#ffbb33 字体颜色#ffffff
+        */
+        .com-severity-bg-Warning::before {
+            background-color: #ffbb33;
+        }
+
+        /*
+        * params4 离线/未启用/未使用/未分配：背景色#e6e6e6 字体颜色#999999
+        */
+        .com-severity-bg-Offline::before {
+            background-color: #e6e6e6;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <!-- 顶部操作栏 -->
+        <el-row class="search-row">
+            <el-dropdown @command="commandClick">
+                <el-button>
+                    {{menuName}}
+                    <i class="el-icon-caret-bottom el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="item in FDs" v-bind:command="item.name" v-bind:key="item.name">
+                        {{item.label}}</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+        </el-row>
+        <div>
+
+            <div>
+                <el-row class="search-row">
+                    <div class="input-with-select">
+                        <el-input :placeholder="i18ns.deviceVersionStatus.deviceVersionStatus_SearchTip"
+                            v-model.trim="keyword" clearable @clear="searchScope">
+                            <el-select v-model="types" slot="prepend">
+                                <el-option v-for="item in ModelTypes" :key="item.id" :label="item.label"
+                                    :value="item.id">
+                                </el-option>
+                            </el-select>
+                            <el-button slot="append" icon="el-icon-search" @click="searchScope"></el-button>
+                        </el-input>
+                    </div>
+                    <el-button icon="plus" v-on:click="refreshTemplate()">{{i18ns.common.refresh}}</el-button>
+                    <el-button icon="plus" v-on:click="takeAllEffect()" :disabled="checkedTake.length<=0">
+                        {{i18ns.deviceVersionStatus.deviceVersionStatus_effective}}</el-button>
+                </el-row>
+                <el-table v-bind:data="listData" style="width:100%;" :empty-text="emptyText"
+                    :element-loading-text="i18ns.common.loading" header-row-class-name="my_table_header"
+                    @selection-change="taskSelectionChange">
+                    <el-table-column type="expand">
+                        <template slot-scope="scope">
+                            <device-version :datalist="scope.row.Components" :columns="columns" :stripe="true"
+                                :border="true">
+                            </device-version>
+                        </template>
+                    </el-table-column>
+                    <el-table-column type="selection" width="55" :selectable='checkboxT'></el-table-column>
+                    <el-table-column prop="IP" :label="i18ns.deviceVersionStatus.deviceVersionStatus_Address" sortable>
+                    </el-table-column>
+                    <el-table-column prop="HealthStatus" :show-overflow-tooltip="true"
+                        :label="i18ns.deviceVersionStatus.deviceVersionStatus_healthStatus" sortable>
+                        <template slot-scope="scope">
+                            <span
+                                :class="typeClass(scope.row.HealthStatus)">{{getHealthStatusName(scope.row.HealthStatus)}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="PowerStatus"
+                        :label="i18ns.deviceVersionStatus.deviceVersionStatus_powerStatus" sortable>
+                        <template slot-scope="scope">
+
+                            <span
+                                v-if="scope.row.PowerStatus=='On'">{{i18ns.deviceVersionStatus.deviceVersionStatus_powerOn}}</span>
+                            <span
+                                v-else-if="scope.row.PowerStatus=='Off'">{{i18ns.deviceVersionStatus.deviceVersionStatus_powerOff}}</span>
+                            <span v-else>--</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="Model" :label="i18ns.deviceVersionStatus.deviceVersionStatus_productType"
+                        sortable>
+                    </el-table-column>
+                    <el-table-column prop="OSVersion" :show-overflow-tooltip="true"
+                        :label="i18ns.deviceVersionStatus.deviceVersionStatus_OSVersion" sortable>
+                        <template slot-scope="scope">
+                            <span v-if="scope.row.OSVersion!=''">{{scope.row.OSVersion}}</span>
+                            <span v-else>
+                                {{i18ns.deviceVersionStatus.deviceVersionStatus_UnableToObtain}}
+                                <el-popover placement="right-end" width="150" trigger="hover"
+                                    :content="i18ns.deviceVersionStatus.deviceVersionStatus_UnableToObtainTip">
+                                    <i slot="reference" class="el-icon-info"
+                                        style="color:#ff4c4c;font-style:normal;"></i>
+                                </el-popover>
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="Type" :label="i18ns.deviceVersionStatus.deviceVersionStatus_type">
+                    </el-table-column>
+                    <el-table-column prop="SerialNumber" :show-overflow-tooltip="true"
+                        :label="i18ns.deviceVersionStatus.deviceVersionStatus_serialNumber" sortable>
+                    </el-table-column>
+                    <el-table-column :label="i18ns.common.operation">
+                        <template slot-scope="scope">
+                            <el-button type="text" size="small"
+                                :disabled="checkedDisable(scope.row)"
+                                @click="takeEffect(scope.row)">
+                                {{i18ns.deviceVersionStatus.deviceVersionStatus_effective}}</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-row class="pagination-row">
+                    <el-col v-bind:span="24" style="text-align:right;" v-if="total<pageSize">
+                        {{i18ns.common.common_totalNumber}}{{listData.length}}
+                    </el-col>
+                    <el-col v-bind:span="24" style="text-align:left;" v-else>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, jumper,slot" v-bind:total="total">
+                            <el-button style="border: 1px solid #c4c4c4;margin-left: 10px;" @click="toensurePage">
+                                {{i18ns.common.confirm}}</el-button>
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </div>
+
+
+        </div>
+        <!-- 生效弹窗 -->
+        <el-dialog :close-on-click-modal="false" :title="i18ns.common.warn" :visible.sync="takeDialogisible"
+            width="60%">
+            <!-- Modify: 2020/03/24 DTS2020030908013 -->
+            <el-row>
+                <el-alert :title="i18ns.deviceVersionStatus.deviceVersionStatus_autoDiscoveryDeleteTip" type="info"
+                    :description="i18ns.deviceVersionStatus.deviceVersionStatus_autoDiscoveryDeleteMsg" show-icon
+                    :closable="false" style="color: #e6a23c;">
+                </el-alert>
+            </el-row>
+            <el-table :data="takeEffectList" border style="width: 100%; margin-top: 10px;"
+                header-row-class-name="my_table_header">
+                <el-table-column prop="IP" :label="i18ns.deviceVersionStatus.deviceVersionStatus_Address">
+                </el-table-column>
+                <el-table-column prop="HealthStatus"
+                    :label="i18ns.deviceVersionStatus.deviceVersionStatus_healthStatus">
+                    <template slot-scope="scope">
+                        <i :class="getStatusClass(scope.row.HealthStatus)"></i>
+                        {{getHealthStatusName(scope.row.HealthStatus)}}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="Model" :label="i18ns.deviceVersionStatus.deviceVersionStatus_model">
+                </el-table-column>
+            </el-table>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="takeDialogisible=false">{{i18ns.common.no}}</el-button>
+                <el-button @click="takeSubmit" v-loading.fullscreen.lock="fullscreenLoading" :disabled="takeSubmitDisable"
+                    :element-loading-text="i18ns.common.loading" type="primary">{{i18ns.common.yes}}</el-button>
+            </div>
+        </el-dialog>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                i18ns: [],
+                FDs: [],
+                FDIp: '',
+                menuName: '',
+                menuKey: '',
+                listData: [],
+                profileId: '', //配置ID
+                /*显示表格数据加载中*/
+                loading: false,
+                /*删除操作遮罩*/
+                fullscreenLoading: false,
+                currentPage: 1,
+                pageSizes: [20, 35, 50, 100],
+                pageSize: 20,
+                total: 0,
+                multipleSelection: [],
+
+                deviceListSelection: [],
+                tipsDialogisible: false,
+
+                deleteList: [], //要删除的数据
+                keyword: '',
+                activeType: 'first',
+                //生效弹窗
+                takeDialogisible: false,
+                takeEffectList: [],
+                checkedTake: [],
+                //Modify: 2020/04/21 DTS2020030918789 生效弹窗中的'是'按钮,不置灰
+                takeSubmitDisable: false,
+                ModelTypes: [], //筛选条件
+                types: 'IP',
+                emptyText: '',
+                //机框
+                firmwareData: [],
+                firmcurrentPage: 1,
+                firmpageSizes: [10, 20, 50, 100],
+                firmpageSize: 10,
+                firmtotal: 0,
+
+                //精准升级
+                serverData: [],
+                managerData: [],
+                switchData: [],
+                fanData: [],
+                activeDetail: 'Server',
+                isCheckDetail: false,
+                columns: [{
+                    prop: "Component",
+                    label: "deviceVersionStatus_component"
+                }, {
+                    prop: "Model",
+                    label: "deviceVersionStatus_model"
+                }, {
+                    prop: "Manufacturer",
+                    label: "deviceVersionStatus_manufacturer"
+                }, {
+                    prop: "InstalledVersion",
+                    label: "deviceVersionStatus_currentVersion"
+                }, {
+                    prop: "AvailableVersion",
+                    label: "deviceVersionStatus_targetVersion",
+                    iconClassAfter:true
+                }, ]
+
+            },
+            created: function () {
+                this.i18ns = getIn18();
+                this.emptyText = this.i18ns.common.loading;
+                var _pageSize = localStorage.getItem("baselineListPageSize");
+                if (_pageSize) {
+                    this.pageSize = parseInt(_pageSize);
+                };
+            },
+            mounted: function () {
+                var that = this;
+                //获取FD列表数据
+                setTimeout(function () {
+                    getFDList(that.bindFD);
+                }, 0);
+                //输入框键盘事件监听
+                $('.is-in-pagination .el-input__inner').bind('keydown', function (event) {
+                    if (event.keyCode == "13") {
+                        var value = parseInt(this.value);
+                        that.handleCurrentChange(value);
+                    }
+                });
+            },
+            methods: {
+                toensurePage: function () {
+                    var value = parseInt($('.is-in-pagination .el-input__inner').val());
+                    this.handleCurrentChange(value);
+                },
+                /**
+                 * 搜索类型
+                 */
+                getServerType: function () {
+                    var options = [{
+                            id: 'IP',
+                            label: this.i18ns.deviceVersionStatus.deviceVersionStatus_Address
+                        },
+                        {
+                            id: 'Model',
+                            label: this.i18ns.deviceVersionStatus.deviceVersionStatus_Select_productType
+                        },
+                        {
+                            id: 'OSVersion',
+                            label: this.i18ns.deviceVersionStatus.deviceVersionStatus_OSVersion
+                        },
+                        {
+                            id: 'Type',
+                            label: this.i18ns.deviceVersionStatus.deviceVersionStatus_type
+                        },
+                        {
+                            id: 'SN',
+                            label: this.i18ns.deviceVersionStatus.deviceVersionStatus_serialNumber
+                        }
+                    ]
+                    this.ModelTypes = options;
+                },
+                //获取状态的颜色
+                // modify: 2020/03/24 DTS2020030908013 和vCentorForFD 样式保持一致
+                getStatusClass: function (status) {
+                    switch (status) {
+                        case "OK":
+                            return "com-severity-bg-OK ";
+                            break;
+                        case "Warning":
+                            return "com-severity-bg-Warning";
+                            break;
+                        case "Critical":
+                            return "com-severity-bg-Critical";
+                            break;
+                        default:
+                            return "com-severity-bg-Offline";
+                    }
+                },
+                /**
+                 * 健康状态
+                 * 
+                 */
+                getHealthStatusName: function (health) {
+                    switch (health) {
+                        case "OK":
+                            return this.i18ns.deviceVersionStatus.deviceVersionStatus_OK;
+                            break;
+                        case "Warning":
+                            return this.i18ns.deviceVersionStatus.deviceVersionStatus_Warning;
+                            break;
+                        case "Critical":
+                            return this.i18ns.deviceVersionStatus.deviceVersionStatus_Critical;
+                            break;
+                        default:
+                            return this.i18ns.deviceVersionStatus.deviceVersionStatus_unknown;
+                    }
+                },
+                typeClass: function (type) {
+                    switch (type) {
+                        case "OK":
+                            return 'type_sucess';
+                            break;
+                        case "Warning":
+                            return 'type_warn';
+                            break;
+                        case "Critical":
+                            return 'type_critical';
+                            break;
+                        default:
+                            return '';
+                    }
+                },
+                /**
+                 * 获取FD数据 回调函数
+                 * 
+                 * @param {any} ret 
+                 */
+                bindFD: function (ret) {
+                    if (ret.code === '0') {
+                        var lg = ret.data.length;
+                        if (lg > 0) {
+                            for (var i = 0; i <
+                                lg; i++) {
+                                if (ret.data[i].aliasName) {
+                                    this.FDs.push({
+                                        label: ret.data[i].aliasName,
+                                        name: ret.data[i].hostIp
+                                    });
+                                } else {
+                                    this.FDs.push({
+                                        label: ret.data[i].hostIp,
+                                        name: ret.data[i].hostIp
+                                    });
+                                }
+                            }
+                            var currentFD = getCurrentFD();
+                            if (currentFD) {
+                                var _currentFD = _.find(this.FDs, {
+                                    name: currentFD
+                                })
+                                if (_currentFD) {
+                                    this.FDIp = currentFD;
+                                    this.menuName = _currentFD.label; /*设置选项卡下拉框默认选中项*/
+                                    this.menuKey = _currentFD.name; /*设置选项卡下拉框默认选中项*/
+                                } else {
+                                    setCurrentFD(ret.data[0].hostIp);
+                                    this.FDIp = ret.data[0].hostIp;
+                                    this.menuName = this.FDs[0].label; /*设置选项卡下拉框默认选中项*/
+                                    this.menuKey = this.FDs[0].name; /*设置选项卡下拉框默认选中项*/
+                                }
+                            } else {
+                                setCurrentFD(ret.data[0].hostIp);
+                                this.FDIp = ret.data[0].hostIp;
+                                this.menuName = this.FDs[0].label; /*设置选项卡下拉框默认选中项*/
+                                this.menuKey = this.FDs[0].name; /*设置选项卡下拉框默认选中项*/
+                            }
+                            this.loading = true;
+                            this.getListData(); /*获取列表数据*/
+                            this.getServerType()
+                        } else {
+                            alertMsg(getErrorMsg({
+                                code: '-90002'
+                            }))
+                        }
+                    } else {
+                        var msg = getErrorMsg(ret);
+                        alertMsg(msg);
+                    }
+                },
+
+                /**
+                 * FD下拉框 点击切换事件
+                 * 
+                 * @param {any} command 
+                 * @param {any} com 
+                 */
+                commandClick: function (command, com) {
+                    this.menuName = com.$el.innerText;
+                    this.menuKey = command;
+                    this.FDIp = command;
+                    setCurrentFD(command);
+                    this.currentPage = 1;
+                    this.pageSize = 10;
+                    this.total = 0;
+                    this.firmcurrentPage = 1;
+                    this.firmpageSize = 10;
+                    this.firmtotal = 0;
+                    this.handleClick()
+                },
+
+                /**
+                 * 切换 服务器 机框
+                 */
+                handleClick: function () {
+                    this.getListData()
+                },
+
+                /**
+                 * 搜索服务器列表
+                 */
+                searchScope: function () {
+                    this.getListData();
+                },
+                /**
+                 * 获取服务器的列表
+                 */
+                getListData: function () {
+                    this.listData = [];
+                    var queryParam = {
+                        ip: this.FDIp,
+                        "pageNo": this.currentPage,
+                        "pageSize": this.pageSize,
+                        orderby: 'IP asc'
+                    }
+                    if (this.keyword) {
+                        queryParam.filter = this.types + " has " + "'" + this.keyword + "'"
+                    }
+                    this.emptyText = this.i18ns.common.loading;
+                    upgradePackageManage.getScopesList(queryParam, this.bindList);
+                },
+                /**
+                 * 获取服务器列表数据 回调函数
+                 * 
+                 * @param {any} ret 
+                 */
+                bindList: function (ret) {
+                    this.emptyText = this.i18ns.common.noData;
+                    if (ret.code === '0') {
+                        this.listData = [];
+                        for (let i = 0; i < ret.data[0].data.Members.length; i++) {
+                            //Modify: 2020/04/21 DTS2020042111654 Chassis 机框当前不支持
+                            ret_type = ret.data[0].data.Members[i].Type;
+                            if (ret_type == 'Chassis') {
+                                continue;
+                            }
+                            ret.data[0].data.Members[i].Server["Type"] = ret_type;
+                            this.listData.push(ret.data[0].data.Members[i].Server);
+                        }
+                        this.total = ret.data[0].data['Members@odata.count']
+                    } else {
+                        if (ret.ip != app.FDIp) {
+                            return false
+                        }
+                        var msg = getErrorMsg(ret);
+                        alertMsg(msg);
+                    }
+                },
+                /**
+                 * 展开行
+                 */
+                expandChange: function (row) {
+                    var componentGroups = _.groupBy(row.Components, function (component) {
+                        return component.ComponentType;
+                    });
+                    var componentTypes = _.keys(componentGroups);
+                    var types = [];
+                    for (var index = 0; index < componentTypes.length; index++) {
+                        var obj = {
+                            type: componentTypes[index],
+                            Modules: componentGroups[componentTypes[index]]
+                        }
+                        types.push(obj)
+                    }
+                    row.types = types;
+                },
+                /**
+                 * 刷新服务器列表
+                 */
+                refreshTemplate: function () {
+                    this.emptyText = this.i18ns.common.loading;
+                    this.getListData();
+                },
+                /**
+                 * 禁用服务器的复选框
+                 */
+                 checkboxT:function (row, index) {
+                    if (row.Type === 'Chassis' ) {
+                        return this.getActionChassisComponents(row.Devices).length !== 0;
+                    } else {
+                        return !this.getActionMenuDisable(row);
+                    }
+                 },
+                 checkedDisable: function (row) {
+                    if (row.Type === 'Chassis') {
+                        return this.getActionChassisComponents(row.Devices).length === 0;
+                    } else {
+                        return this.getActionMenuDisable(row);
+                    }
+                },
+                getActionChassisComponents : function (devices) {
+                    //从机框刀片服务器中查找可生效的组件
+                    var serverDevices = _.filter(devices, function (item) {
+                        return item.DeviceType == "Server";
+                    });
+                    var actionChassisComponents = [];
+                    for (var i = 0; i < serverDevices.length; i++) {
+                        var breakStatus = false;
+                        if (serverDevices[i].Status === 'ToTakeEffect' || serverDevices[i].Status === 'PartialUpgradeSuccess' || serverDevices[i].Status === 'NoActive') {
+                            breakStatus = true;
+                        } else {
+                            for (var j = 0; j < serverDevices[i].Components.length; j++) {
+                                if (serverDevices[i].Components[j].Status === 'ToTakeEffect' || serverDevices[i].Components[j].Status === 'PartialUpgradeSuccess' || serverDevices[i].Components[j].Status === 'NoActive') {
+                                    breakStatus = true;
+                                }
+                            }
+                        }
+                        if (breakStatus) {
+                            actionChassisComponents.push(serverDevices[i]);
+                        }
+                    }
+                    return actionChassisComponents;
+                },
+                getActionMenuDisable : function (row) {
+                    //Modify: 2020/04/21 DTS2020030918789 生效按钮置灰
+                    if (row.Status === 'NoActive' || row.Status === 'PartialUpgradeSuccess' || row.Status === 'Activeable') {
+                        return false;
+                    }else if(row.Status != 'Inactiveable' && row.Status != 'Inactiveable_Activing'){
+                         var Components = row.Components;
+                         for (var i in Components) {
+                             if (Components[i].Status === 'NoActive') {
+                                 return false;//return可以跳出循环无需break
+                             }
+                         }
+                    }
+                    return true;
+                },
+                /**
+                 * 隐藏展开图标
+                 */
+                getClassName: function (row, expandedRows) {
+                    var res = [];
+                    if (row.row.Modules && row.row.Modules.length == 1) {
+                        res.push('row-expand-cover')
+                    } else {
+                        res.push('hide-padding')
+                    }
+                    return res.join(' ')
+                },
+
+                /**
+                 * 服务器的全选
+                 */
+                taskSelectionChange: function (val) {
+                    this.checkedTake = val;
+                },
+                /**
+                 * 单个生效
+                 */
+                takeEffect: function (row) {
+                    this.takeEffectList = [];
+                    this.takeDialogisible = true;
+                    //Modify: 2020/04/21 DTS2020030918789  生效弹窗中的'是'按钮,不置灰
+                    this.takeSubmitDisable = false;
+                    this.takeEffectList = [row];
+                },
+                /**
+                 * 多个生效
+                 */
+                takeAllEffect: function (row) {
+                    this.takeEffectList = [];
+                    this.takeDialogisible = true;
+                    //Modify: 2020/04/21 DTS2020030918789 生效弹窗中的'是'按钮,不置灰
+                    this.takeSubmitDisable = false;
+                    this.takeEffectList = this.checkedTake;
+                },
+                /**
+                 * 确认生效
+                 */
+                takeSubmit: function () {
+                	//Modify: 2020/04/21 DTS2020030918789 生效弹窗中的'是'按钮,置灰 
+                	if (this.takeSubmitDisable == true) {
+                        return false;
+                    }
+                    this.takeSubmitDisable = true
+                    var param = {
+                        Devices: []
+                    }
+                    for (var i = 0; i < _.size(this.takeEffectList); i++) {
+                        param.Devices.push(this.takeEffectList[i].ID)
+                    }
+                    upgradePackageManage.ActiveFireware({
+                        ip: app.FDIp,
+                        data: param
+                    }, function (res) {
+                        if (res.code == 0) {
+                            app.getListData();
+                            _.each(res.data[0].data.TaskIDs, function (item) {
+                                app.task(item);
+                            })
+                            app.takeDialogisible = false;
+                            app.refreshTemplate();
+                        } else {
+                            if (res.ip != app.FDIp) {
+                                return false
+                            }
+                            var msg = getErrorMsg(res);
+                            alertMsg(msg);
+                        }
+                    });
+                },
+                /**
+                 * 任务
+                 */
+                task: function (taskId) {
+                    var mysetInterval = setInterval(function () {
+                        upgradePackageManage.getMasterTaskInfo({
+                            ip: app.FDIp,
+                            id: taskId
+                        }, function (res) {
+                            if (res.code == 0) {
+                                if (res.data[0].data.Status == 'Finish') {
+                                    window.clearInterval(mysetInterval);
+                                    this.getListData()
+                                }
+                            }
+                            if (res.data[0].data.Status == 'Failed') {
+                                window.clearInterval(mysetInterval);
+                            }
+                        });
+                    }, 1000);
+                },
+                /**
+                 * 设置当前显示数据的总数
+                 * 
+                 * @param {any} val 
+                 */
+                handleSizeChange: function (val) {
+                    this.currentPage = 1;
+                    this.pageSize = val;
+                    this.getListData();
+                },
+                /**
+                 * 切换当前显示页
+                 * 
+                 * @param {any} val 
+                 */
+                handleCurrentChange: function (val) {
+                    this.currentPage = val;
+                    this.getListData();
+                },
+
+
+                /**
+                 * 获取机框
+                 */
+                getEnclosureDevicesData: function () {
+                    this.firmwareData = [];
+                    this.emptyText = this.i18ns.common.loading;
+                    upgradePackageManage.getEnclosureDevices({
+                        ip: app.FDIp
+                    }, function (ret) {
+                        app.emptyText = app.i18ns.common.noData;
+                        if (ret.code == 0) {
+                            var obj = ret.data[0].data.EnclosureFirmwareInfo ? ret.data[0].data
+                                .EnclosureFirmwareInfo : [];
+                            app.firmwareData = obj;
+                            app.firmtotal = obj.length;
+                        } else {
+                            if (ret.ip != app.FDIp) {
+                                return false
+                            }
+                            var msg = getErrorMsg(ret);
+                            alertMsg(msg);
+                        }
+                    });
+                },
+                /**
+                 * 刷新机框
+                 */
+                refreshEnclosureDevices: function () {
+                    this.getEnclosureDevicesData()
+                },
+                /**
+                 * 选择机框
+                 */
+                uploadSelectionChange: function () {
+
+                },
+                /**
+                 * 改变机框的当前显示数据的总数
+                 */
+                handleFirmSizeChange: function (val) {
+                    this.firmcurrentPage = 1;
+                    this.firmpageSize = val;
+                },
+                /**
+                 * 切换机框当前显示页
+                 * 
+                 * @param {any} val 
+                 */
+                handleFirmCurrentChange: function (val) {
+                    this.firmcurrentPage = val;
+                },
+                /**
+                 * 展开机框的行
+                 */
+                expandEnsure: function (row, expandedRows) {
+                    row.activeDetail = "Server";
+                    if (row.Devices && row.Devices.length > 0) {
+                        row.serverData = _.filter(row.Devices, function (item) {
+                            return item.DeviceType == 'Server'
+                        });
+                        row.managerData = _.filter(row.Devices, function (item) {
+                            return item.DeviceType == 'Manager'
+                        });
+                        row.switchData = _.filter(row.Devices, function (item) {
+                            return item.DeviceType == 'Switch'
+                        });
+                        row.fanData = _.filter(row.Devices, function (item) {
+                            return item.DeviceType != 'Server' && item.DeviceType != 'Manager' &&
+                                item.DeviceType != 'Switch'
+                        });
+                    }
+                },
+                handleDetailClick: function (row) {
+                    var ref = '';
+                    if (row.name == 'Server') {
+                        ref = 'serverData'
+                        app.$refs['managerData'].hideFirmwares()
+                        app.$refs['switchData'].hideFirmwares()
+                        app.$refs['fanData'].hideFirmwares()
+                    } else if (row.name == 'Manager') {
+                        ref = 'managerData'
+                        app.$refs['serverData'].hideFirmwares()
+                        app.$refs['switchData'].hideFirmwares()
+                        app.$refs['fanData'].hideFirmwares()
+                    } else if (row.name == 'Switch') {
+                        ref = 'switchData'
+                        app.$refs['managerData'].hideFirmwares()
+                        app.$refs['serverData'].hideFirmwares()
+                        app.$refs['fanData'].hideFirmwares()
+                    } else if (row.name == 'Fan') {
+                        ref = 'fanData'
+                        app.$refs['managerData'].hideFirmwares()
+                        app.$refs['switchData'].hideFirmwares()
+                        app.$refs['serverData'].hideFirmwares()
+                    }
+                    app.$refs[ref].handleClick()
+                }
+
+
+            }
+        });
+    </script>
+</body>
+
+</html>

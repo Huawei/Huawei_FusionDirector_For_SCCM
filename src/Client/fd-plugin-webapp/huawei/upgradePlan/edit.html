@@ -1,0 +1,3066 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>编辑计划</title>
+    <link href="../../css/element.css" rel="stylesheet" />
+    <link href="../../css/style.css" rel="stylesheet" />
+    <script src="../../scripts/vue.js"></script>
+    <script src="../../scripts/element.js"></script>
+    <script src="../../scripts/jquery.min.js"></script>
+    <script src="../../scripts/i18n/zh-CN.js"></script>
+    <script src="../../scripts/i18n/en.js"></script>
+    <script src="../i18n/en.js"></script>
+    <script src="../i18n/zh-CN.js"></script>
+    <script src="../../scripts/polyfill.min.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/errorCode.js"></script>
+    <script src="../js/taskMessage.js"></script>
+    <script src="../../scripts/lodash.min.js"></script>
+    <script src="js/rest.js"></script>
+    <script src="js/inputnum.js"></script>
+    <script src="js/partial.js"></script>
+    <script src="js/deviceInfo.js"></script>
+    <script src="js/serverTable.js"></script>
+    <script src="js/managerTable.js"></script>
+    <script src="js/switchTable.js"></script>
+    <script src="js/fanTable.js"></script>
+    <script src="js/deviceVersion.js"></script>
+    <script src="component/choiceDevices.js"></script>
+    <script src="component/targetDevices.js"></script>
+    <script src="component/devicesGroup.js"></script>
+    <script src="component/choiceBaselines.js"></script>
+    <script src="component/targetBaselines.js"></script>
+    <script src="component/choicePackages.js"></script>
+    <script src="component/targetPackages.js?t=1"></script>
+    <script src="component/serverComponents.js"></script>
+    <script src="component/upgradeReport.js"></script>
+    <script src="component/batchDevices.js"></script>
+    <script src="component/baselinesDetail.js"></script>
+    <script src="component/targetBaselinesDetail.js"></script>
+    <script src="component/driverComponents.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        body {
+            min-width: 900px;
+        }
+
+
+
+        .el-dialog {
+            min-width: 830px;
+        }
+
+        .input-with-select {
+            display: inline-block;
+            position: relative;
+        }
+
+        .input-with-select .el-select .el-input {
+            width: 130px;
+        }
+
+        .inputNum {
+            position: relative;
+            display: inline-block;
+            width: 180px;
+            line-height: 38px;
+        }
+
+        .Severity-Major::before {
+            background-color: #e54545;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            margin-right: 10px;
+            content: '';
+            display: inline-block;
+        }
+
+        .Severity-Unknown::before {
+            background-color: #e6e6e6;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            margin-right: 10px;
+            content: '';
+            display: inline-block;
+        }
+
+        .Severity-Normal::before {
+            background-color: #66D1B5;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            margin-right: 10px;
+            content: '';
+            display: inline-block;
+        }
+
+        .margin-top10 {
+            margin-top: 10px;
+        }
+
+        .padding-left27 {
+            padding-left: 27px;
+        }
+
+        .margin-bottom10 {
+            margin-bottom: 10px;
+        }
+
+        .el-popover {
+            text-align: inherit;
+        }
+
+        .itemUpgrade {
+            margin: 20px 40px 30px 30px;
+            padding: 10px;
+            width: 180px;
+            height: 110px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: #fff;
+            float: left;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .upgradePlan_importAddDevice .optionIcon {
+            float: right;
+            cursor: pointer;
+            color: #409eff;
+            margin-right: 5px;
+        }
+
+        .upgradePlan_importAddDevice .optionIcon i {
+            font-size: 18px;
+        }
+
+        .rightImg {
+            position: absolute;
+            top: 25px;
+            right: -60px;
+        }
+
+        .inputNum {
+            position: relative;
+            display: inline-block;
+            width: 180px;
+            line-height: 38px;
+        }
+
+        .inputNum .reduce {
+            position: absolute;
+            z-index: 1;
+            top: 1px;
+            left: 1px;
+            width: 40px;
+            height: auto;
+            text-align: center;
+            background: #f5f7fa;
+            color: #606266;
+            cursor: pointer;
+            font-size: 23px;
+            border-radius: 4px 0 0 4px;
+            border-right: 1px solid #dcdfe6;
+            display: inline-block;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .inputNum .add {
+            position: absolute;
+            z-index: 1;
+            top: 1px;
+            right: 1px;
+            width: 40px;
+            height: auto;
+            text-align: center;
+            background: #f5f7fa;
+            color: #606266;
+            cursor: pointer;
+            font-size: 23px;
+            border-radius: 0 4px 4px 0;
+            border-left: 1px solid #dcdfe6;
+            display: inline-block;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .inputNum .input {
+            background-color: #fff;
+            background-image: none;
+            border-radius: 4px;
+            border: 1px solid #dcdfe6;
+            box-sizing: border-box;
+            color: #606266;
+            display: inline-block;
+            font-size: inherit;
+            height: 40px;
+            line-height: 40px;
+            outline: none;
+            padding: 0 15px;
+            transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+            width: 100%;
+            -webkit-appearance: none;
+            padding-left: 50px;
+            padding-right: 50px;
+            text-align: center;
+        }
+
+        .row-expand-cover .el-table__expand-column .el-icon {
+            visibility: hidden;
+        }
+
+        .hide-padding+tr .el-table__expanded-cell {
+            padding: 0;
+            padding-left: 48px;
+            border: none;
+        }
+
+        .packageSearch .el-select-multipleauto {
+            min-width: 410px;
+        }
+
+        .el-icon-question {
+            margin-left: 5px;
+            color: #409eff;
+        }
+
+        .el-input-group {
+            width: 330px !important;
+        }
+
+        .el-checkbox+.el-checkbox {
+            margin-right: 15px !important;
+            margin-left: 0 !important;
+        }
+
+        .el-checkbox-group .el-checkbox {
+            margin-right: 15px !important;
+            margin-left: 0 !important;
+        }
+
+        .el-message-box__status.el-icon-info {
+            color: #409EFF !important;
+        }
+
+        .el-message-box__status {
+            top: 18px !important;
+        }
+
+        .el-tooltip__popper {
+            max-width: 250px;
+        }
+
+        .moudle_table_header {
+            display: none;
+        }
+
+        .row-expand-cover .el-table__expand-column .el-table__expand-icon {
+            display: none;
+        }
+
+        .hide-padding+tr .el-table__expanded-cell {
+            padding: 0;
+            padding-left: 97px;
+            border: none;
+            border-bottom: 1px solid #dfe6ec;
+        }
+
+        .batch-devices-table .hide-padding+tr .el-table__expanded-cell {
+            padding: 0;
+            padding-left: 47px !important;
+            border: none;
+            border-bottom: 1px solid #dfe6ec;
+        }
+
+        .toslot {
+            display: inline-block;
+        }
+
+        .pagenum {
+            width: 28px;
+        }
+
+        .pagenum .el-input__inner {
+            height: 21px;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <el-row>
+            <div class="steps">
+                <el-steps :active="active" finish-status="success" process-status="success">
+                    <el-step :title="i18ns.upgradePlan.upgradePlan_selectDevice"></el-step>
+                    <el-step :title="i18ns.upgradePlan.upgradePlan_selectVersion"></el-step>
+                    <el-step :title="i18ns.upgradePlan.upgradePlan_check"></el-step>
+                    <el-step :title="i18ns.upgradePlan.upgradePlan_planPolicy"></el-step>
+                </el-steps>
+            </div>
+            <div>
+                <!-- 选择设备 -->
+                <el-row v-show="active==0">
+                    <el-form :model="form" :rules="rules" ref="form" label-width="120px">
+                        <el-form-item label="Fusion Director ">
+                            <el-select v-model="FDIp" @change="commandClick" disabled>
+                                <el-option v-for="item in FDList" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item :label="i18ns.upgradePlan.upgradePlan_planName" prop="Name">
+                            <el-popover placement="right-start" trigger="hover" :content="i18ns.common.regExp_userName">
+                                <el-input slot="reference" :placeholder="i18ns.common.pleaseInput" v-model="form.Name"
+                                    class="input-with-select" style="width: 400px;"></el-input>
+                            </el-popover>
+                        </el-form-item>
+                        <el-form-item :label="i18ns.upgradePlan.upgradePlan_planDescription" prop="Description">
+                            <el-input :rows="5" type="textarea" v-model="form.Description" maxlength="256"
+                                :placeholder="i18ns.upgradePlan.upgradePlan_descriptionRange"></el-input>
+                            <span class="desLength"> <span>{{form.Description.length}}</span>/256</span>
+                        </el-form-item>
+                        <el-form-item :label="i18ns.upgradePlan.upgradePlan_start">
+                            <el-switch v-model="form.Enabled">
+                            </el-switch>
+                        </el-form-item>
+                    </el-form>
+                    <el-row style="border-top: solid #dcdfe6 1px " class="margin-bottom10">
+                        <el-col :span="12">
+                            <h3>{{i18ns.upgradePlan.upgradePlan_targetDevice}}</h3>
+                        </el-col>
+                        <el-col :span="12" style="  padding-top: 15px; text-align:right;">
+                            <el-button type="primary" icon="el-icon-plus" :disabled="targetGroups.length>0"
+                                @click="openChoiceDevicesDialog">
+                                {{i18ns.upgradePlan.upgradePlan_selectDevice}}</el-button>
+                            <el-button type="primary" icon="el-icon-plus" :disabled="targetDevices.length>0"
+                                @click="openGroupDialog">
+                                {{i18ns.upgradePlan.upgradePlan_selectDeviceGroup}}</el-button>
+                            <el-button icon="el-icon-delete"
+                                :disabled="selectedDevices.length==0&&selectedGroups.length==0" @click="deleteData">
+                                {{i18ns.common.delete}}
+                            </el-button>
+                        </el-col>
+                    </el-row>
+                    <choice-devices ref="choice-devices" v-on:choice-devices="addTargetDevices"></choice-devices>
+                    <target-devices ref="target-devices" v-show="isDevice"
+                        v-on:choice-target-devices="choiceTargetDevices">
+                    </target-devices>
+                    <el-row v-show="isGroup">
+                        <devices-group ref="target-group" v-on:tree-node-chcek="targetGroupNodeCheck"></devices-group>
+                    </el-row>
+                    <el-row style="text-align: center;" v-show="!isGroup&&!isDevice">
+                        {{i18ns.common.get_no_data}}
+                    </el-row>
+                </el-row>
+
+                <!-- 选择版本 -->
+                <el-row v-show="active==1">
+                    <el-row style="margin: 10px 0 10px 0;">
+                        <i class="el-icon-info" style="color:#409EFF;font-style:normal;"> </i>
+                        {{i18ns.upgradePlan.upgradePlan_nullPackageTip}}
+                    </el-row>
+                    <el-row style="border-top: solid #dcdfe6 1px " class="margin-bottom10">
+                        <el-col :span="12">
+                            <h3>{{i18ns.upgradePlan.upgradePlan_targetVersion}}</h3>
+                        </el-col>
+                        <el-col :span="12" style="  padding-top: 15px; text-align:right;">
+                            <el-button type="primary" icon="el-icon-plus" :disabled="targetPackages.length>0"
+                                @click="openChoiceBaselinesDialog">
+                                {{i18ns.upgradePlan.upgradePlan_selectBaseline}}</el-button>
+                            <el-button type="primary" icon="el-icon-plus" :disabled="targetBaselines.length>0"
+                                @click="openChoicePackagesDialog">
+                                {{i18ns.upgradePlan.upgradePlan_selectUpgradePackage}}</el-button>
+                            <el-button icon="el-icon-delete"
+                                :disabled="selectedBaselines.length==0&&selectedPackages.length==0"
+                                @click="deletePackageData">
+                                {{i18ns.common.delete}}
+                            </el-button>
+                        </el-col>
+                    </el-row>
+                    <choice-baselines ref="choice-baselines" v-on:choice-baselines="addTargetBaselines">
+                    </choice-baselines>
+                    <target-baselines ref="target-baselines" v-show="isBaselines"
+                        v-on:choice-target-baseline-package="choiceTargetBaselinePackages">
+                    </target-baselines>
+                    <choice-packages ref="choice-packages" v-on:choice-packages="addTargetPackages">
+                    </choice-packages>
+                    <target-packages ref="target-packages" v-show="isPackages"
+                        v-on:choice-target-packages="choiceTargetPackages">
+                    </target-packages>
+                    <el-row style="text-align: center;" v-show="!isPackages&&!isBaselines">
+                        {{i18ns.common.get_no_data}}
+                    </el-row>
+                </el-row>
+
+                <!-- 检查 -->
+                <el-row v-show="active==2">
+                    <el-row v-show="!isCheckCompleted" style="text-align: center;">
+                        <el-row>
+                            <el-progress :percentage="percentage" style="width: 50%;margin: 0 auto;"></el-progress>
+                        </el-row>
+                        <el-row>
+                            <h3>{{i18ns.upgradePlan.upgradePlan_checkReportTip}}</h3>
+                        </el-row>
+                        <el-row style="font-size: 24px;"><i class="el-icon-loading"></i></el-row>
+                    </el-row>
+                    <el-row v-show="isCheckCompleted">
+                        <el-row style="margin: 10px 0 10px 0;">
+                            <i class="el-icon-info" style="color:#409EFF;font-style:normal;"> </i>
+                            {{i18ns.upgradePlan.upgradePlan_checkDevice}}
+                        </el-row>
+                        <h3>{{i18ns.upgradePlan.upgradePlan_aupgradeReport}}</h3>
+                        <upgrade-report ref="upgrade-report"></upgrade-report>
+                    </el-row>
+                </el-row>
+
+                <!-- 策略 -->
+                <el-row v-show="active==3">
+                    <el-row>
+                        <el-row>
+                            <h3>{{i18ns.upgradePlan.upgradePlan_upgradePolicy}}</h3>
+                        </el-row>
+                        <el-row>
+                            <el-row class="margin-top10">
+                                <div v-if="selectedUpgradeReportList.length>0">
+                                    <el-radio v-model="upgradePolicy.ExecutionPolicy" label="Immediate">
+                                        {{i18ns.upgradePlan.upgradePlan_quickUpgrade}}</el-radio>
+                                </div>
+                                <div v-if="selectedUpgradeReportList.length==0">
+                                    <el-tooltip effect="dark" :content="i18ns.upgradePlan.upgradePlan_notPeriodTip"
+                                        placement="right" effect="light">
+                                        <el-radio v-model="upgradePolicy.ExecutionPolicy" label="Immediate" disabled>
+                                            {{i18ns.upgradePlan.upgradePlan_quickUpgrade}}</el-radio>
+                                    </el-tooltip>
+                                </div>
+                            </el-row>
+                            <el-row class="margin-top10 padding-left27">
+                                {{i18ns.upgradePlan.upgradePlan_quickUpgradeText}}
+                            </el-row>
+                            <el-row class="margin-top10">
+                                <el-radio v-model="upgradePolicy.ExecutionPolicy" label="Later">
+                                    {{i18ns.upgradePlan.upgradePlan_schduleUpgrade}}</el-radio>
+                            </el-row>
+                            <el-row class="margin-top10 padding-left27">
+                                {{i18ns.upgradePlan.upgradePlan_schduleUpgradeText}}
+                            </el-row>
+                            <el-row style="margin:10px;background: #f6f7f8;padding: 10px;"
+                                v-show="upgradePolicy.ExecutionPolicy=='Later'">
+                                <el-row>
+                                    <el-row>
+                                        <el-col style="width: 108px;">
+                                            {{i18ns.upgradePlan.upgradePlan_occer+i18ns.common.colon}}
+                                        </el-col>
+                                        <el-col style="width: 108px;">
+                                            <div v-if="!upgradeSwitch">
+                                                <el-radio v-model="upgradePolicy.ScheduledEffectivePeriod" label="week">
+                                                    {{i18ns.upgradePlan.upgradePlan_week}}</el-radio>
+                                            </div>
+                                            <div v-if="upgradeSwitch">
+                                                <el-tooltip effect="dark"
+                                                    :content="i18ns.upgradePlan.upgradePlan_noneDeviceThree"
+                                                    placement="right" effect="light">
+                                                    <el-radio v-model="upgradePolicy.ScheduledEffectivePeriod"
+                                                        label="week" disabled>
+                                                        {{i18ns.upgradePlan.upgradePlan_week}}</el-radio>
+                                                </el-tooltip>
+                                            </div>
+                                        </el-col>
+                                        <el-col style="width: 108px;">
+                                            <div v-if="!upgradeSwitch">
+                                                <el-radio v-model="upgradePolicy.ScheduledEffectivePeriod"
+                                                    label="month">
+                                                    {{i18ns.upgradePlan.upgradePlan_month}}</el-radio>
+                                            </div>
+                                            <div v-if="upgradeSwitch">
+                                                <el-tooltip effect="dark"
+                                                    :content="i18ns.upgradePlan.upgradePlan_noneDeviceThree"
+                                                    placement="right" effect="light">
+                                                    <el-radio v-model="upgradePolicy.ScheduledEffectivePeriod"
+                                                        label="month" disabled>
+                                                        {{i18ns.upgradePlan.upgradePlan_month}}</el-radio>
+                                                </el-tooltip>
+                                            </div>
+                                        </el-col>
+                                        <el-col style="width: 108px;">
+                                            <div v-if="selectedUpgradeReportList.length>0">
+                                                <el-radio v-model="upgradePolicy.ScheduledEffectivePeriod"
+                                                    label="specifiedTime">
+                                                    {{i18ns.upgradePlan.upgradePlan_specifiedTime}}
+                                                </el-radio>
+                                            </div>
+                                            <div v-if="selectedUpgradeReportList.length==0">
+                                                <el-tooltip effect="dark"
+                                                    :content="i18ns.upgradePlan.upgradePlan_notPeriodTip"
+                                                    placement="right" effect="light">
+                                                    <el-radio v-model="upgradePolicy.ScheduledEffectivePeriod"
+                                                        label="specifiedTime" disabled>
+                                                        {{i18ns.upgradePlan.upgradePlan_specifiedTime}}
+                                                    </el-radio>
+                                                </el-tooltip>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                    <!-- 周 -->
+                                    <el-row v-show="upgradePolicy.ScheduledEffectivePeriod=='week'"
+                                        class="margin-top10">
+                                        <el-row>
+                                            <el-col style=" line-height: 30px;width: 108px;">
+                                                {{i18ns.upgradePlan.upgradePlan_weekly+i18ns.common.colon}}
+                                            </el-col>
+                                            <el-col style="line-height: 30px;width: 574px;" class="week">
+                                                <el-checkbox-group v-model="upgradePolicy.weeks">
+                                                    <el-checkbox v-for="week in weekList" :label="week.id"
+                                                        :key="week.id">
+                                                        {{week.title}}
+                                                    </el-checkbox>
+                                                </el-checkbox-group>
+                                            </el-col>
+                                            <el-col style="line-height: 30px;width: 40px;">
+                                                {{i18ns.upgradePlan.upgradePlan_dateTime+i18ns.common.detailColon}}
+                                            </el-col>
+                                            <el-col style="line-height: 30px;width: 100px;"></el-col>
+                                            <!-- Modify: 2020/03/24 DTS2020030620069 -->
+                                            <el-time-picker v-model="upgradePolicy.weeksTime" value-format="HH:mm:ss" :editable=false :clearable=false
+                                                style="width: 100px;">
+                                            </el-time-picker>
+                                        </el-row>
+                                    </el-row>
+
+                                    <!-- 月 -->
+                                    <el-row v-show="upgradePolicy.ScheduledEffectivePeriod=='month'"
+                                        class="margin-top10">
+                                        <el-row>
+                                            <el-col style=" line-height: 30px;;width: 108px;">
+                                                {{i18ns.upgradePlan.upgradePlan_date+i18ns.common.detailColon}}</el-col>
+                                            <el-col style="width: 100px;">
+                                                <el-select v-model="upgradePolicy.month">
+                                                    <el-option v-for="item in monthOptions" :key="item.value"
+                                                        :label="item.label" :value="item.value">
+                                                    </el-option>
+                                                </el-select>
+                                            </el-col>
+                                            <el-col style=" line-height: 30px;width: 40px; margin-left: 30px;">
+                                                {{i18ns.upgradePlan.upgradePlan_dateTime+i18ns.common.detailColon}}
+                                            </el-col>
+                                            <!-- Modify: 2020/03/24 DTS2020030620069 -->
+                                            <el-col style="width: 100px;">
+                                                <el-time-picker v-model="upgradePolicy.monthTime"
+                                                    value-format="HH:mm:ss" :editable=false :clearable=false style="width: 100px;">
+                                                </el-time-picker>
+                                            </el-col>
+                                        </el-row>
+                                        <el-row v-show="upgradePolicy.month>28" class="margin-top10">
+                                            <el-col style=" line-height: 30px;;width: 108px;"> &nbsp;</el-col>
+                                            <i class="el-icon-warning"
+                                                style="color: #ff4c4c;"></i>&nbsp;{{i18ns.upgradePlan.upgradePlan_monthOverDayTip}}
+                                        </el-row>
+                                    </el-row>
+                                    <!-- 指定时间 -->
+                                    <el-row v-show="upgradePolicy.ScheduledEffectivePeriod=='specifiedTime'"
+                                        class="margin-top10">
+                                        <el-row>
+                                            <el-col style=" line-height: 30px;;width: 108px;">
+                                                {{i18ns.upgradePlan.upgradePlan_dateTime+i18ns.common.detailColon}}
+                                            </el-col>
+                                            <el-col :span="10">
+                                                <!-- Modify: 2020/03/24 DTS2020030620069 -->
+                                                <el-date-picker v-model="upgradePolicy.SpecifiedTime" :editable=false :clearable=false  type="datetime">
+                                                </el-date-picker>
+                                            </el-col>
+                                        </el-row>
+                                    </el-row>
+                                </el-row>
+                            </el-row>
+
+                        </el-row>
+                        <div style="width: 100%; border-bottom: #dddddd 1px dashed; margin-top: 10px;"></div>
+                        <!-- 版本生效策略 -->
+                        <el-row>
+                            <h3>{{i18ns.upgradePlan.upgradePlan_effectPolicy}}</h3>
+                        </el-row>
+                        <el-row>
+                            <el-row class="margin-top10">
+                                <el-radio v-model="upgradePolicy.EffectPolicy" :label="false">
+                                    {{i18ns.upgradePlan.upgradePlan_manualPolicy}}</el-radio>
+                            </el-row>
+                            <el-row class="margin-top10 padding-left27">
+                                {{i18ns.upgradePlan.upgradePlan_manualPolicyText}}
+                            </el-row>
+                            <el-row class="margin-top10">
+                                <el-radio v-model="upgradePolicy.EffectPolicy" :label="true">
+                                    {{i18ns.upgradePlan.upgradePlan_autoPolicy}}</el-radio>
+                            </el-row>
+                            <el-row class="margin-top10 padding-left27">
+                                {{i18ns.upgradePlan.upgradePlan_autoPolicyText}}
+                            </el-row>
+                        </el-row>
+                        <div style="width: 100%; border-bottom: #dddddd 1px dashed; margin-top: 10px;"></div>
+                        <!-- 设备分批策略 -->
+                        <el-row>
+                            <h3>{{i18ns.upgradePlan.upgradePlan_batchPolicy}}<el-popover placement=" right" width="200"
+                                    trigger="hover" :content="i18ns.upgradePlan.upgradePlan_batchPolicyTip">
+                                    <i class="el-icon-question" slot="reference"></i>
+                                </el-popover>
+                            </h3>
+                        </el-row>
+                        <el-row>
+                            <div
+                                v-if="upgradePolicy.ScheduledEffectivePeriod=='specifiedTime'||upgradePolicy.ExecutionPolicy=='Immediate'">
+                                <el-checkbox v-model="upgradeSwitch"
+                                    @change="upgradePolicy.ScheduledEffectivePeriod='specifiedTime'">
+                                    {{i18ns.upgradePlan.upgradePlan_start}}
+                                </el-checkbox>
+                            </div>
+                            <div v-else>
+                                <el-tooltip effect="dark" :content="i18ns.upgradePlan.upgradePlan_noneDeviceTwo"
+                                    placement="right" effect="light">
+                                    <el-checkbox v-model="upgradeSwitch" disabled>
+                                        {{i18ns.upgradePlan.upgradePlan_start}}
+                                    </el-checkbox>
+                                </el-tooltip>
+                            </div>
+                            <!-- 分批升级的设备 -->
+                            <div class="upgradePlan_importAddDevice" v-if="upgradeSwitch">
+                                <partial :batch-device="batchDevice" @adddevice="showBatch" @showdetil="showDetil">
+                                </partial>
+                            </div>
+                        </el-row>
+                    </el-row>
+                </el-row>
+
+            </div>
+        </el-row>
+        <el-row>
+            <!-- 底部按钮 -->
+            <el-button style="margin-top:10px;" @click="back">{{i18ns.common.cancel}}</el-button>
+            <el-button style="margin-top:10px;" @click="active--" v-if="active!=0">
+                {{i18ns.quickupgrade.quickupgrade_preStep}}</el-button>
+            <el-button style="margin-top:10px;" @click="nextClick(0)" v-if="active==0"
+                :disabled="selectedDevices.length==0&&selectedGroups.length==0">
+                {{i18ns.quickupgrade.quickupgrade_nextStep}}</el-button>
+            <el-button style="margin-top:10px;" @click="nextClick(1)" v-if="active==1"
+                :disabled="selectedBaselinePackages.length==0&&selectedPackages.length==0">
+                {{i18ns.quickupgrade.quickupgrade_nextStep}}</el-button>
+            <el-button style="margin-top:10px;" @click="nextClick(2)" v-if="active==2" :disabled="!isCheckCompleted">
+                {{i18ns.quickupgrade.quickupgrade_nextStep}}</el-button>
+            <el-button style="margin-top:10px;" v-if="active==3" @click="submit"
+                v-loading.fullscreen.lock="fullscreenLoading" :element-loading-text="i18ns.common.loading">
+                {{i18ns.common.submit}}</el-button>
+        </el-row>
+
+        <el-dialog :close-on-click-modal="false" :visible.sync="groupDialogVisible" @closed="closeGroupDialog">
+            <el-row slot="title" style="margin:0 8px 8px 8px; ">
+                <span
+                    style="line-height: 18px; font-size: 14px; color: #303133;">{{i18ns.upgradePlan.upgradePlan_groupSelectTip}}</span>
+                <span style="color:#606266;margin-left:20px;">{{i18ns.upgradePlan.upgradePlan_groupTip}}</span>
+            </el-row>
+            <el-row style="margin:0 8px 8px 8px; ">
+                <i class="el-icon-info" style="color:#409EFF;font-style:normal;"> </i>
+                {{i18ns.upgradePlan.upgradePlan_serverBMCTip}}
+            </el-row>
+
+            <devices-group ref="devices-group"></devices-group>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="groupDialogVisible = false">{{i18ns.common.cancel}}</el-button>
+                <el-button type="primary" @click="choiceGroup">{{i18ns.common.confirm}}</el-button>
+            </span>
+        </el-dialog>
+        <!-- 分批添加 -->
+        <el-dialog :close-on-click-modal="false" :title="i18ns.upgradePlan.upgradePlan_addBatches"
+            :visible.sync="batchDeviceDialog" width="80%">
+            <el-row>
+                <h2>{{i18ns.upgradePlan.upgradePlan_information}}</h2>
+            </el-row>
+            <el-form v-bind:model="batchForm" ref="batchForm" v-bind:label-width="labelWidth" label-position="left"
+                label-suffix=":">
+                <el-form-item :label="i18ns.upgradePlan.upgradePlan_teamName" class="productType">
+                    <span>{{batchForm.teamName}}</span>
+                </el-form-item>
+                <el-form-item :label="i18ns.upgradePlan.upgradePlan_delayTime">
+                    <!--  <inputnum ref="inputnum" :num="batchForm.num" @changenum="setnum"></inputnum> -->
+                    <el-input-number v-model="batchForm.num" :precision="1" :step="0.1" :min="0" :max="24">
+                </el-form-item>
+            </el-form>
+            <el-row>
+                <h2>{{i18ns.upgradePlan.upgradePlan_deviceSelectTwo}}</h2>
+            </el-row>
+            <batch-devices ref="check-batch-devices" :is-selected="true" @choice-batch-devices="handleSelectBatch">
+            </batch-devices>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="batchDeviceDialog = false">{{i18ns.common.cancel}}</el-button>
+                <el-button @click="ensureaddBatches" v-loading.fullscreen.lock="fullscreenLoading"
+                    :element-loading-text="i18ns.common.loading" type="primary" :disabled="checkBatchDevice.length<=0">
+                    {{i18ns.common.confirm}}</el-button>
+            </div>
+        </el-dialog>
+        <!-- 分批详情 -->
+        <el-dialog :close-on-click-modal="false" :title="batchDescTit" :visible.sync="batchDescDialog" width="80%">
+            <batch-devices ref="batch-devices"></batch-devices>
+        </el-dialog>
+
+    </div>
+    <script type="text/template" id="choiceDevices">
+        <div>
+            <el-dialog :title="i18ns.upgradePlan.upgradePlan_addDevicces" :close-on-click-modal="false" :visible.sync="dialogVisible"
+                @opened="handleDialogOpen" @close="handleDialogClose">
+                <el-row class="search-row">
+                    <div class="input-with-select">
+                        <el-input :placeholder="i18ns.upgradePlan.upgradePlan_SearchTip" v-model.trim="keyword"
+                            clearable @clear="searchList" style="vertical-align:middle">
+                            <el-select v-model="searchType" slot="prepend">
+                                <el-option v-for="item in searchTypes" :key="item.id" :label="item.label"
+                                    :value="item.id">
+                                </el-option>
+                            </el-select>
+                            <el-button slot="append" icon="el-icon-search" @click="searchList"></el-button>
+                        </el-input>
+                        <el-button icon="el-icon-refresh" @click="refresh" style="vertical-align:middle"></el-button>
+                    </div>
+
+                </el-row>
+                <el-row>
+                    <el-table :data="datalist" border stripe header-row-class-name="my_table_header"
+                        @selection-change="handleSelectionChange" ref="addDevicesTable" row-key="IP"
+                        @sort-change="sortChange" :default-sort="{prop: 'IP', order: 'ascending'}">
+                        <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                            <template slot-scope="scope">
+                                <device-version :datalist="scope.row.Components" :columns="columns" :stripe="true"
+                                    :border="true">
+                                </device-version>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   type="selection" width="45" :reserve-selection="true"> </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="IP" :label="i18ns.upgradePlan.upgradePlan_Address" sortable="custom"
+                            width="110">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="HealthStatus" :label="i18ns.upgradePlan.upgradePlan_healthStatus">
+                            <template slot-scope="scope">{{getServerStatusTxt(scope.row.HealthStatus)}}</template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Server.PowerStatus" :label="i18ns.upgradePlan.upgradePlan_powerStatus"
+                            width="100">
+                            <template slot-scope="scope">
+                                <span
+                                    v-if="scope.row.PowerStatus=='On'">{{i18ns.upgradePlan.upgradePlan_powerOn}}</span>
+                                <span
+                                    v-else-if="scope.row.PowerStatus=='Off'">{{i18ns.upgradePlan.upgradePlan_powerOff}}</span>
+                                <span v-else>--</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Model" :label="i18ns.upgradePlan.upgradePlan_Model" sortable="custom">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="OSVersion" :label="i18ns.upgradePlan.upgradePlan_OSVersion"
+                            sortable="custom" width="110">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.OSVersion!=''">{{scope.row.OSVersion}}</span>
+                                <span v-else>
+                                    {{i18ns.upgradePlan.upgradePlan_UnableToObtain}}
+                                    <el-popover placement="right-end" width="150" trigger="hover"
+                                        :content="i18ns.upgradePlan.upgradePlan_UnableToObtainTip">
+                                        <i slot="reference" class="el-icon-info"
+                                            style="color:#ff4c4c;font-style:normal;"></i>
+                                    </el-popover>
+                                </span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type" width="60">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="SerialNumber" :label="i18ns.upgradePlan.upgradePlan_serialNumber" >
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Group" :label="i18ns.upgradePlan.upgradePlan_group"></el-table-column>
+                    </el-table>
+                    <el-row class="pagination-row choiceDevices">
+                        <el-col v-bind:span="6" style="text-align:left;">
+                            {{i18ns.upgradePlan.upgradePlan_alreadySelect+i18ns.common.detailColon}}{{selectedList.length}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-if="total<10">
+                            {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-else>
+                            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            :pager-count="5"
+                                v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes"
+                                v-bind:page-size="pageSize" layout="total, sizes, prev, pager, next,slot"
+                                v-bind:total="total">
+                                <div class="toslot">
+                                        {{i18ns.common.to}}
+                                        <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                        {{i18ns.common.page}}
+                                    </div>
+                            </el-pagination>
+                        </el-col>
+                    </el-row>
+                </el-row>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">{{i18ns.common.cancel}}</el-button>
+                    <el-button type="primary" @click="submit">{{i18ns.common.confirm}}</el-button>
+                </span>
+            </el-dialog>
+        </div>
+    </script>
+    <script type="text/template" id="targetDevices">
+        <div>
+            <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                ref="selectedDevicesTable" @selection-change="handleSelectionChange" row-key="ID">
+                <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                    <template slot-scope="scope">
+                        <device-version :datalist="scope.row.Components" :columns="columns" :stripe="true"
+                            :border="true">
+                        </device-version>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   type="selection" width="55" :reserve-selection="true"> </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="IP" :label="i18ns.upgradePlan.upgradePlan_Address" sortable>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="HealthStatus" :label="i18ns.upgradePlan.upgradePlan_healthStatus">
+                    <template slot-scope="scope">{{getServerStatusTxt(scope.row.HealthStatus)}}</template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="PowerStatus" :label="i18ns.upgradePlan.upgradePlan_powerStatus">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.PowerStatus=='On'">{{i18ns.upgradePlan.upgradePlan_powerOn}}</span>
+                        <span v-else-if="scope.row.PowerStatus=='Off'">{{i18ns.upgradePlan.upgradePlan_powerOff}}</span>
+                        <span v-else>--</span>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Model" :label="i18ns.upgradePlan.upgradePlan_Model" sortable>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="OSVersion" :label="i18ns.upgradePlan.upgradePlan_OSVersion" sortable>
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.OSVersion!=''">{{scope.row.OSVersion}}</span>
+                        <span v-else>
+                            {{i18ns.upgradePlan.upgradePlan_UnableToObtain}}
+                            <el-popover placement="right-end" width="150" trigger="hover"
+                                :content="i18ns.upgradePlan.upgradePlan_UnableToObtainTip">
+                                <i slot="reference" class="el-icon-info" style="color:#ff4c4c;font-style:normal;"></i>
+                            </el-popover>
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type"></el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="SerialNumber" :label="i18ns.upgradePlan.upgradePlan_serialNumber" >
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Group" :label="i18ns.upgradePlan.upgradePlan_group">
+                </el-table-column>
+            </el-table>
+            <el-row class="pagination-row targetDevices">
+                <el-col v-bind:span="24" style="text-align:right;" v-if="total<10">
+                    {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                </el-col>
+                <el-col v-bind:span="24" style="text-align:left;" v-else>
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                        v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, slot" v-bind:total="total">
+                        <div class="toslot">
+                                {{i18ns.common.to}}
+                                <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                {{i18ns.common.page}}
+                            </div>
+                    </el-pagination>
+                </el-col>
+            </el-row>
+        </div>
+    </script>
+    <script type="text/template" id="devicesGroup">
+        <div>
+            <el-row>
+                <el-col :span="4">
+                    <el-tree :data="treeData" ref="groupTree" show-checkbox default-expand-all node-key="name"
+                        :props="defaultProps" @check="treeNodeChcek">
+                        <span slot-scope="data">
+                            <el-popover
+                                placement="right"
+                                :disabled="data.data.name.length<14"
+                                trigger="hover">
+                                <span>{{ data.data.name }}</span>
+                                <span slot="reference" style="white-space: nowrap;word-break: break-all;width:81px;display:inline-block;overflow: hidden;
+                                text-overflow: ellipsis;">{{ data.data.name }}</span>
+                                </el-popover>
+                        </span>
+                    </el-tree>
+                    <el-row v-if="treeData.length>0">
+                        {{i18ns.common.common_totalNumber}}{{treeData.length>0?treeData[0].children.length:0}}
+                    </el-row>
+                </el-col>
+                <el-col :span="20">
+                    <el-table :data="datalist" border stripe header-row-class-name="my_table_header"
+                        ref="groupDevicesTable" @sort-change="sortChange"
+                        :default-sort="{prop: 'IP', order: 'ascending'}">
+                        <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                            <template slot-scope="scope">
+                                <device-version :datalist="scope.row.Components" :columns="columns" :stripe="true"
+                                    :border="true">
+                                </device-version>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="IP" :label="i18ns.upgradePlan.upgradePlan_Address" sortable="custom"
+                            width="110" >
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="HealthStatus" :label="i18ns.upgradePlan.upgradePlan_healthStatus">
+                            <template slot-scope="scope">{{getServerStatusTxt(scope.row.HealthStatus)}}</template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Server.PowerStatus" :label="i18ns.upgradePlan.upgradePlan_powerStatus"
+                            width="100">
+                            <template slot-scope="scope">
+                                <span
+                                    v-if="scope.row.PowerStatus=='On'">{{i18ns.upgradePlan.upgradePlan_powerOn}}</span>
+                                <span
+                                    v-else-if="scope.row.PowerStatus=='Off'">{{i18ns.upgradePlan.upgradePlan_powerOff}}</span>
+                                <span v-else>--</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Model" :label="i18ns.upgradePlan.upgradePlan_Model" sortable="custom">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="OSVersion" :label="i18ns.upgradePlan.upgradePlan_OSVersion"
+                            sortable="custom" width="110">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.OSVersion!=''">{{scope.row.OSVersion}}</span>
+                                <span v-else>
+                                    {{i18ns.upgradePlan.upgradePlan_UnableToObtain}}
+                                    <el-popover placement="right-end" width="150" trigger="hover"
+                                        :content="i18ns.upgradePlan.upgradePlan_UnableToObtainTip">
+                                        <i slot="reference" class="el-icon-info"
+                                            style="color:#ff4c4c;font-style:normal;"></i>
+                                    </el-popover>
+                                </span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type" width="60">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="SerialNumber" :label="i18ns.upgradePlan.upgradePlan_serialNumber" >
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Group" :label="i18ns.upgradePlan.upgradePlan_group"></el-table-column>
+                    </el-table>
+                    <el-row class="pagination-row devicesGroup">
+                        <el-col v-bind:span="6" style="text-align:left;">
+                            {{i18ns.upgradePlan.upgradePlan_alreadySelect}}{{total}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-if="total<10">
+                            {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-else>
+                            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                small
+                                v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes"
+                                v-bind:page-size="pageSize" layout="total, sizes, prev, pager, next, slot"
+                                v-bind:total="total">
+                                <div class="toslot">
+                                        {{i18ns.common.to}}
+                                        <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                        {{i18ns.common.page}}
+                                    </div>
+                            </el-pagination>
+                        </el-col>
+                    </el-row>
+                </el-col>
+            </el-row>
+
+        </div>
+    </script>
+    <script type="text/template" id="choiceBaselines">
+        <div>
+            <el-dialog :title="i18ns.upgradePlan.upgradePlan_addBaseline"  :close-on-click-modal="false" :visible.sync="dialogVisible"
+                @opened="handleDialogOpen" @closed="handleDialogClose">
+                <el-row class="search-row">
+                    <div class="input-with-select">
+                        <el-input :placeholder="i18ns.upgradePlan.upgradePlan_SearchTip" v-model.trim="keyword"
+                            clearable @clear="searchDevices" style="vertical-align:middle">
+                            <el-select v-model="searchType" slot="prepend">
+                                <el-option v-for="item in searchTypes" :key="item.id" :label="item.label"
+                                    :value="item.id">
+                                </el-option>
+                            </el-select>
+                            <el-button slot="append" icon="el-icon-search" @click="searchDevices"></el-button>
+                        </el-input>
+                        <el-button icon="el-icon-refresh" @click="refresh" style="vertical-align:middle"></el-button>
+                    </div>
+
+                </el-row>
+                <el-row>
+                    <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                        ref="choiceBaselineTable" row-key="UUID" @sort-change="sortChange"
+                        :default-sort="{prop: 'Name', order: 'ascending'}">
+                        <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                            <template slot-scope="scope">
+                                <baselines-detail :datalist="scope.row.FirmwarePackages" ></baselines-detail>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   width="75">
+                            <template slot-scope="scope">
+                                <el-radio class="radio" v-model="UUID" :label="scope.row.UUID">&nbsp;
+                                </el-radio>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Name" :label="i18ns.upgradePlan.upgradePlan_baselineName"
+                            sortable="custom">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type">
+                            <template slot-scope="scope">{{getTypeTxt(scope.row.Type)}}</template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="PackageNum" :label="i18ns.upgradePlan.upgradePlan_packageCounts"
+                            width="200">
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="CreateTime" :label="i18ns.upgradePlan.upgradePlan_createDate">
+                        </el-table-column>
+
+                    </el-table>
+                    <el-row class="pagination-row choiceBaselines">
+                        <el-col v-bind:span="6" style="text-align:left;">
+                            {{i18ns.upgradePackageWarehouse.versionWarehouse_alreadyBaseline+i18ns.common.detailColon}}{{selectedBaselines.Name?selectedBaselines.Name:''}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-if="total<10">
+                            {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-else>
+                            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            :pager-count="5"
+                                v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes"
+                                v-bind:page-size="pageSize" layout="total, sizes, prev, pager, next, slot"
+                                v-bind:total="total">
+                                <div class="toslot">
+                                        {{i18ns.common.to}}
+                                        <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                        {{i18ns.common.page}}
+                                    </div>
+                            </el-pagination>
+                        </el-col>
+                    </el-row>
+                </el-row>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">{{i18ns.common.cancel}}</el-button>
+                    <el-button type="primary" @click="submit">{{i18ns.common.confirm}}</el-button>
+                </span>
+            </el-dialog>
+        </div>
+    </script>
+    <script type="text/template" id="baselinesDetail">
+        <div>
+            <el-row>
+                <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                    ref="baselinesDetailTable"  >
+                    <el-table-column :show-overflow-tooltip="true" prop="PackageName" :label="i18ns.upgradePlan.upgradePlan_packageName"></el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="Component" :label="i18ns.upgradePlan.upgradePlan_component" >
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.Module}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="Version" :label="i18ns.upgradePlan.upgradePlan_version" >
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.CurrentVer}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="" :label="i18ns.upgradePlan.upgradePlan_type" >
+                        <template slot-scope="scope">{{getTypeTxt(scope.row.PackageType)}}</template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="SupportModel" :label="i18ns.upgradePlan.upgradePlan_model" >
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="Size" :label="i18ns.upgradePlan.upgradePlan_size" >
+                        <template slot-scope="scope">
+                            {{unitFun(scope.row.Size)}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="CreationTime" :label="i18ns.upgradePlan.upgradePlan_createDate">
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="" :label="i18ns.upgradePlan.upgradePlan_manufacturer">
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.Manufacturer}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-row class="pagination-row baselinesDetail">
+                    <el-col v-bind:span="24" style="text-align:right;" v-if="total<10">
+                        {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                    </el-col>
+                    <el-col v-bind:span="24" style="text-align:right;" v-else>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, slot" v-bind:total="total">
+                            <div class="toslot">
+                                    {{i18ns.common.to}}
+                                    <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                    {{i18ns.common.page}}
+                                </div>
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-row>
+
+        </div>
+    </script>
+    <script type="text/template" id="targetBaselines">
+        <div>
+            <el-row>
+                <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                    ref="targetBaselineTable" @expand-change="expandChange">
+                    <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                        <template slot-scope="scope">
+                            <target-baselines-detail :datalist="scope.row.FirmwarePackages" v-on:choice-target-baseline-package="handleSelectionChange"></target-baselines-detail>
+                        </template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Name" :label="i18ns.upgradePlan.upgradePlan_baselineName" sortable="custom">
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type">
+                        <template slot-scope="scope">{{getTypeTxt(scope.row.Type)}}</template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="PackageNum" :label="i18ns.upgradePlan.upgradePlan_packageCounts" width="200">
+                        <template slot-scope="scope"> {{scope.row.FirmwarePackages.length}} </template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="CreateTime" :label="i18ns.upgradePlan.upgradePlan_createDate">
+                    </el-table-column>
+                </el-table>
+                <el-row class="pagination-row targetBaselines">
+                    <el-col v-bind:span="24" style="text-align:right;" v-if="total<10">
+                        {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                    </el-col>
+                    <el-col v-bind:span="24" style="text-align:right;" v-else>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, slot" v-bind:total="total">
+                            <div class="toslot">
+                                    {{i18ns.common.to}}
+                                    <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                    {{i18ns.common.page}}
+                                </div>
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-row>
+
+        </div>
+    </script>
+    <script type="text/template" id="targetBaselinesDetail">
+        <div>
+            <el-row>
+                <el-table :data="currentPageListData" ref="targetBaselinesPackagesTable" style="width: 100%;" border
+                stripe header-row-class-name="my_table_header" row-key="PackageName"
+                @selection-change="handleSelectionChange">
+                    <el-table-column :show-overflow-tooltip="true" type="selection" width="55" :reserve-selection="true">
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="PackageName" :label="i18ns.upgradePlan.upgradePlan_packageName"></el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="Component" :label="i18ns.upgradePlan.upgradePlan_component" >
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.Module}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="Version" :label="i18ns.upgradePlan.upgradePlan_version" >
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.CurrentVer}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="" :label="i18ns.upgradePlan.upgradePlan_type" >
+                        <template slot-scope="scope">{{getTypeTxt(scope.row.PackageType)}}</template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="SupportModel" :label="i18ns.upgradePlan.upgradePlan_model" >
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="Size" :label="i18ns.upgradePlan.upgradePlan_size" >
+                        <template slot-scope="scope">
+                            {{unitFun(scope.row.Size)}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="CreationTime" :label="i18ns.upgradePlan.upgradePlan_createDate">
+                    </el-table-column>
+                    <el-table-column :show-overflow-tooltip="true" prop="" :label="i18ns.upgradePlan.upgradePlan_manufacturer">
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.Manufacturer}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-row class="pagination-row targetBaselinesDetail">
+                    <el-col v-bind:span="24" style="text-align:right;" v-if="datalist<10">
+                        {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                    </el-col>
+                    <el-col v-bind:span="24" style="text-align:right;" v-else>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, slot" v-bind:total="total">
+                            <div class="toslot">
+                                    {{i18ns.common.to}}
+                                    <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                    {{i18ns.common.page}}
+                                </div>
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-row>
+
+        </div>
+    </script>
+    <script type="text/template" id="choicePackages">
+        <div>
+            <el-dialog :title="i18ns.upgradePlan.upgradePlan_selectUpgradePackage"  :close-on-click-modal="false" :visible.sync="dialogVisible"
+                @opened="handleDialogOpen" @close="handleDialogClose">
+                <el-row class="search-row">
+                    <div class="input-with-select">
+                        <el-input :placeholder="i18ns.upgradePlan.upgradePlan_SearchTip" v-model.trim="keyword"
+                            clearable @clear="searchList" style="vertical-align:middle">
+                            <el-select v-model="searchType" slot="prepend">
+                                <el-option v-for="item in searchTypes" :key="item.id" :label="item.label"
+                                    :value="item.id">
+                                </el-option>
+                            </el-select>
+                            <el-button slot="append" icon="el-icon-search" @click="searchList"></el-button>
+                        </el-input>
+                        <el-button icon="el-icon-refresh" @click="refresh" style="vertical-align:middle"></el-button>
+                    </div>
+
+                </el-row>
+                <el-row>
+                    <el-table :data="datalist" border stripe header-row-class-name="my_table_header"
+                        @selection-change="handleSelectionChange" ref="choicePackagesTable" row-key="UUID"
+                        @sort-change="sortChange" :default-sort="{prop: 'PackageName', order: 'ascending'}">
+                        <el-table-column  :show-overflow-tooltip="true"   type="selection" width="55" :reserve-selection="true"> </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="PackageName" :label="i18ns.upgradePlan.upgradePlan_packageName"
+                             sortable="custom"></el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Component" :label="i18ns.upgradePlan.upgradePlan_component">
+                            <template slot-scope="scope">
+                                <span v-for="vis in scope.row.Version">
+                                    {{vis.Module}}&nbsp;</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Version" :label="i18ns.upgradePlan.upgradePlan_version">
+                            <template slot-scope="scope">
+                                <span v-for="vis in scope.row.Version">
+                                    {{vis.CurrentVer}}&nbsp;</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type">
+                            <template slot-scope="scope">{{getTypeTxt(scope.row.Type)}}</template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Model" :label="i18ns.upgradePlan.upgradePlan_model" sortable="custom"
+                            >
+                            <template slot-scope="scope">{{scope.row.ProductType}}</template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="Size" :label="i18ns.upgradePlan.upgradePlan_size">
+                            <template slot-scope="scope">
+                                {{unitFun(scope.row.Size)}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="CreateTime" :label="i18ns.upgradePlan.upgradePlan_createDate" width="120"
+                             sortable="custom">
+                            <template slot-scope="scope">{{scope.row.CreationTime}}</template>
+                        </el-table-column>
+                        <el-table-column  :show-overflow-tooltip="true"   prop="" :label="i18ns.upgradePlan.upgradePlan_manufacturer"
+                            >
+                            <template slot-scope="scope">
+                                <span v-for="vis in scope.row.Version">
+                                    {{vis.Manufacturer}}&nbsp;</span>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                    <el-row class="pagination-row choicePackages">
+                        <el-col v-bind:span="6" style="text-align:left;">
+                             <!--Modify: 2020/03/25 DTS2020031201730 升级包统计单位为“台”，建议修改为“个”-->
+                            {{i18ns.upgradePlan.upgradePlan_alreadySelectPackage+i18ns.common.detailColon}}{{selectedList.length}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-if="total<10">
+                            {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                        </el-col>
+                        <el-col v-bind:span="18" style="text-align:right;" v-else>
+                            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                :pager-count="5"
+                                v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes"
+                                v-bind:page-size="pageSize" layout="total, sizes, prev, pager, next,slot"
+                                v-bind:total="total">
+                                <div class="toslot">
+                                        {{i18ns.common.to}}
+                                        <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                        {{i18ns.common.page}}
+                                    </div>
+                            </el-pagination>
+                        </el-col>
+                    </el-row>
+                </el-row>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">{{i18ns.common.cancel}}</el-button>
+                    <el-button type="primary" @click="submit">{{i18ns.common.confirm}}</el-button>
+                </span>
+            </el-dialog>
+        </div>
+    </script>
+    <script type="text/template" id="targetPackages">
+        <div>
+            
+                <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                    @selection-change="handleSelectionChange" ref="selectedPackagesTable" row-key="UUID">
+                    <el-table-column  :show-overflow-tooltip="true"   type="selection" width="55" :reserve-selection="true"> </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="PackageName" :label="i18ns.upgradePlan.upgradePlan_packageName"
+                         sortable="custom"></el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Component" :label="i18ns.upgradePlan.upgradePlan_component">
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.Module}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Version" :label="i18ns.upgradePlan.upgradePlan_version">
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.CurrentVer}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type">
+                        <template slot-scope="scope">{{getTypeTxt(scope.row.Type)}}</template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Model" :label="i18ns.upgradePlan.upgradePlan_model" sortable="custom"
+                        >
+                        <template slot-scope="scope">{{scope.row.ProductType}}</template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="Size" :label="i18ns.upgradePlan.upgradePlan_size">
+                        <template slot-scope="scope">
+                            {{unitFun(scope.row.Size)}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="CreateTime" :label="i18ns.upgradePlan.upgradePlan_createDate"
+                         sortable="custom">
+                        <template slot-scope="scope">{{scope.row.CreationTime}}</template>
+                    </el-table-column>
+                    <el-table-column  :show-overflow-tooltip="true"   prop="" :label="i18ns.upgradePlan.upgradePlan_manufacturer"
+                        >
+                        <template slot-scope="scope">
+                            <span v-for="vis in scope.row.Version">
+                                {{vis.Manufacturer}}&nbsp;</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-row class="pagination-row targetPackages">
+                    <el-col v-bind:span="6" style="text-align:left;">
+                        {{i18ns.upgradePlan.upgradePlan_alreadySelectPackage+i18ns.common.detailColon}}{{selectedList.length}}
+                    </el-col>
+                    <el-col v-bind:span="18" style="text-align:right;" v-if="total<10">
+                        {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                    </el-col>
+                    <el-col v-bind:span="18" style="text-align:right;" v-else>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                            v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                            layout="total, sizes, prev, pager, next,slot" v-bind:total="total">
+                            <div class="toslot">
+                                {{i18ns.common.to}}
+                                <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                {{i18ns.common.page}}
+                            </div>
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+        </div>
+    </script>
+    <script type="text/template" id="serverComponent">
+        <div>
+            <el-table :data="currentPageListData" stripe border header-row-class-name="my_table_header"
+                ref="serverComponentTable" row-key="ID"  :row-class-name="getClassName">
+                <el-table-column type="expand">
+                    <template slot-scope="scope">
+                        <driver-component :datalist="scope.row.DriverInfo" :parentindex="scope.$index">
+                        </driver-component>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="" label="" width="50" v-if="!isSelected">
+                    <template slot-scope="scope">
+                        <div v-if="!scope.row.checkboxDisabled">
+                            <div  v-if="!scope.row.checkboxTips">
+                                <el-checkbox v-model="scope.row.isSelected"
+                                @change="checkBoxChange(scope.$index,scope.row)">
+                            </el-checkbox>
+                        </div>
+                        <div v-else>
+                                <el-tooltip  :content="scope.row.checkboxTips" placement="right"
+                                    effect="light">
+                                    <el-checkbox v-model="scope.row.isSelected"  @change="checkBoxChange(scope.$index,scope.row)">
+                                    </el-checkbox>
+                                </el-tooltip>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <el-tooltip  :content="scope.row.checkboxTips" placement="right"
+                                effect="light">
+                                <el-checkbox v-model="scope.row.isSelected" :disabled="scope.row.checkboxDisabled">
+                                </el-checkbox>
+                            </el-tooltip>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Component" :label="i18ns.upgradePlan.upgradePlan_component"></el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Model" :label="i18ns.upgradePlan.upgradePlan_Model"></el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Manufacturer" :label="i18ns.upgradePlan.upgradePlan_manufacturer">
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="InstalledVersion" :label="i18ns.upgradePlan.upgradePlan_currentVersion">
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="AvilableVersion" :label="i18ns.upgradePlan.upgradePlan_targetVersion">
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Severity" :label="i18ns.upgradePlan.upgradePlan_severityS">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.Severity=='Major'||scope.row.Severity=='Critical'" class="Severity-Major">
+                            {{i18ns.upgradePlan.upgradePlan_severityStatus}}</div>
+                        <div v-if="scope.row.Severity=='Unknown'" class="Severity-Unknown">
+                            {{i18ns.upgradePlan.upgradePlan_unkownStatus}}</div>
+                        <div v-if="scope.row.Severity=='Normal'" class="Severity-Normal">
+                            {{i18ns.upgradePlan.upgradePlan_normalStatus}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="RebootRequired" :label="i18ns.upgradePlan.upgradePlan_reboot">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.RebootRequired===true">
+                            {{i18ns.upgradePlan.upgradePlan_yes}}</div>
+                        <div v-if="scope.row.RebootRequired===false">
+                            {{i18ns.upgradePlan.upgradePlan_no}}</div>
+                        <div
+                            v-if="scope.row.RebootRequired===undefined||scope.row.RebootRequired===''||scope.row.RebootRequired===null">
+                            --</div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-row class="pagination-row serverComponent">
+                <el-col v-bind:span="24" style="text-align:right;" v-if="list.length<10">
+                    {{i18ns.common.common_totalNumber}}{{list.length}}
+                </el-col>
+                <el-col v-bind:span="24" style="text-align:right;" v-else>
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                        v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                        layout="total, sizes, prev, pager, next,slot" v-bind:total="list.length">
+                        <div class="toslot">
+                                {{i18ns.common.to}}
+                                <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                {{i18ns.common.page}}
+                            </div>
+                    </el-pagination>
+                </el-col>
+            </el-row>
+        </div>
+    </script>
+    <script type="text/template" id="upgradeReport">
+        <div>
+            <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                ref="upgradeReportTable">
+                <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                    <template slot-scope="scope">
+                        <server-component :datalist="scope.row.Server.Components" :minspversion="scope.row.MINSPVersion"
+                            :minbmcversionforspupgrade="scope.row.MINBMCVersionForSPUpgrade"
+                            v-on:children-checkbox-change="childrenCheckBoxChange" :parentindex="scope.$index">
+                        </server-component>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="" width="50">
+                    <template slot-scope="scope" slot="header">
+                        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="allCheckboxChange"
+                            :disabled="headerCheckboxDisabled">
+                        </el-checkbox>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-checkbox v-model="scope.row.isSelected" :indeterminate="scope.row.isIndeterminate"
+                            @change="checkboxChange(scope.$index,scope.row)" :disabled="scope.row.checkboxDisabled">
+                        </el-checkbox>
+                    </template>
+                </el-table-column>
+
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.IP" :label="i18ns.upgradePlan.upgradePlan_Address" sortable>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.HealthStatus" :label="i18ns.upgradePlan.upgradePlan_healthStatus">
+                    <template slot-scope="scope">{{getServerStatusTxt(scope.row.Server.HealthStatus)}}</template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.PowerStatus" :label="i18ns.upgradePlan.upgradePlan_powerStatus">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.Server.PowerStatus=='On'">{{i18ns.upgradePlan.upgradePlan_powerOn}}</span>
+                        <span
+                            v-else-if="scope.row.Server.PowerStatus=='Off'">{{i18ns.upgradePlan.upgradePlan_powerOff}}</span>
+                        <span v-else>--</span>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.Model" :label="i18ns.upgradePlan.upgradePlan_Model" sortable>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.OSVersion" :label="i18ns.upgradePlan.upgradePlan_OSVersion" sortable>
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.Server.OSVersion!=''">{{scope.row.Server.OSVersion}}</span>
+                        <span v-else>
+                            {{i18ns.upgradePlan.upgradePlan_UnableToObtain}}
+                            <el-popover placement="right-end" width="150" trigger="hover"
+                                :content="i18ns.upgradePlan.upgradePlan_UnableToObtainTip">
+                                <i slot="reference" class="el-icon-info" style="color:#ff4c4c;font-style:normal;"></i>
+                            </el-popover>
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type"></el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.SerialNumber" :label="i18ns.upgradePlan.upgradePlan_serialNumber"
+                    >
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Groups" :label="i18ns.upgradePlan.upgradePlan_group">
+                    <template slot-scope="scope">
+                        {{scope.row.Groups?scope.row.Groups.join(','):''}}
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.Severity" :label="i18ns.upgradePlan.upgradePlan_severityS">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.Server.Severity=='Major'" class="Severity-Major">
+                            {{i18ns.upgradePlan.upgradePlan_severityStatus}}</div>
+                        <div v-if="scope.row.Server.Severity=='Unknown'" class="Severity-Unknown">
+                            {{i18ns.upgradePlan.upgradePlan_unkownStatus}}</div>
+                        <div v-if="scope.row.Server.Severity=='Normal'" class="Severity-Normal">
+                            {{i18ns.upgradePlan.upgradePlan_normalStatus}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="RebootRequired" :label="i18ns.upgradePlan.upgradePlan_reboot">
+                    <template slot-scope="scope">
+                        <!-- <div v-if="scope.row.RebootRequired===true">
+                            {{i18ns.upgradePlan.upgradePlan_yes}}</div>
+                        <div v-if="scope.row.RebootRequired===false">
+                            {{i18ns.upgradePlan.upgradePlan_no}}</div> -->
+                        <div>
+                            --</div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-row class="pagination-row upgradeReport">
+                <el-col v-bind:span="24" style="text-align:right;" v-if="total<10">
+                    {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                </el-col>
+                <el-col v-bind:span="24" style="text-align:left;" v-else>
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                        v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, slot" v-bind:total="total">
+                        <div class="toslot">
+                                {{i18ns.common.to}}
+                                <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                {{i18ns.common.page}}
+                            </div>
+                    </el-pagination>
+                </el-col>
+            </el-row>
+        </div>
+    </script>
+    <script type="text/template" id="batchDevices">
+        <div class="batch-devices-table">
+            <el-table :data="currentPageListData" border stripe header-row-class-name="my_table_header"
+                ref="batchDevicesTable" @selection-change="handleSelectionChange" :show-header="false">
+                <el-table-column  :show-overflow-tooltip="true"   type="expand">
+                    <template slot-scope="scope">
+                        <server-component :datalist="scope.row.Server.Components" :minspversion="scope.row.MINSPVersion"
+                            :minbmcversionforspupgrade="scope.row.MINBMCVersionForSPUpgrade" :parentindex="scope.$index"
+                            :is-selected="true">
+                        </server-component>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   type="selection" width="55" v-if="isSelected"> </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.IP" :label="i18ns.upgradePlan.upgradePlan_Address" sortable>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.HealthStatus" :label="i18ns.upgradePlan.upgradePlan_healthStatus">
+                    <template slot-scope="scope">{{getServerStatusTxt(scope.row.Server.HealthStatus)}}</template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.PowerStatus" :label="i18ns.upgradePlan.upgradePlan_powerStatus">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.Server.PowerStatus=='On'">{{i18ns.upgradePlan.upgradePlan_powerOn}}</span>
+                        <span
+                            v-else-if="scope.row.Server.PowerStatus=='Off'">{{i18ns.upgradePlan.upgradePlan_powerOff}}</span>
+                        <span v-else>--</span>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.Model" :label="i18ns.upgradePlan.upgradePlan_Model" sortable>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.OSVersion" :label="i18ns.upgradePlan.upgradePlan_OSVersion" sortable>
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.Server.OSVersion!=''">{{scope.row.Server.OSVersion}}</span>
+                        <span v-else>
+                            {{i18ns.upgradePlan.upgradePlan_UnableToObtain}}
+                            <el-popover placement="right-end" width="150" trigger="hover"
+                                :content="i18ns.upgradePlan.upgradePlan_UnableToObtainTip">
+                                <i slot="reference" class="el-icon-info" style="color:#ff4c4c;font-style:normal;"></i>
+                            </el-popover>
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Type" :label="i18ns.upgradePlan.upgradePlan_type"></el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.SerialNumber" :label="i18ns.upgradePlan.upgradePlan_serialNumber"
+                    >
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Groups" :label="i18ns.upgradePlan.upgradePlan_group">
+                    <template slot-scope="scope">
+                        {{scope.row.Groups?scope.row.Groups.join(','):''}}
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="Server.Severity" :label="i18ns.upgradePlan.upgradePlan_severityS">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.Server.Severity=='Major'" class="Severity-Major">
+                            {{i18ns.upgradePlan.upgradePlan_severityStatus}}</div>
+                        <div v-if="scope.row.Server.Severity=='Unknown'" class="Severity-Unknown">
+                            {{i18ns.upgradePlan.upgradePlan_unkownStatus}}</div>
+                        <div v-if="scope.row.Server.Severity=='Normal'" class="Severity-Normal">
+                            {{i18ns.upgradePlan.upgradePlan_normalStatus}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column  :show-overflow-tooltip="true"   prop="RebootRequired" :label="i18ns.upgradePlan.upgradePlan_reboot">
+                    <template slot-scope="scope">
+                        <!-- <div v-if="scope.row.RebootRequired===true">
+                            {{i18ns.upgradePlan.upgradePlan_yes}}</div>
+                        <div v-if="scope.row.RebootRequired===false">
+                            {{i18ns.upgradePlan.upgradePlan_no}}</div> -->
+                        <div>
+                            --</div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-row class="pagination-row batchDevices">
+                <el-col v-bind:span="24" style="text-align:right;" v-if="total<10">
+                    {{i18ns.common.common_totalNumber}}{{datalist.length}}
+                </el-col>
+                <el-col v-bind:span="24" style="text-align:left;" v-else>
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                        v-bind:current-page="currentPage" v-bind:page-sizes="pageSizes" v-bind:page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, slot" v-bind:total="total">
+                        <div class="toslot">
+                                {{i18ns.common.to}}
+                                <el-input class="pagenum" v-model="jumperPage" v-on:input="jumper" ></el-input>
+                                {{i18ns.common.page}}
+                            </div>
+                    </el-pagination>
+                </el-col>
+            </el-row>
+        </div>
+    </script>
+    <script type="text/template" id="driverComponent">
+        <div>
+            <el-table :data="currentPageListData" stripe border header-row-class-name="my_table_header"
+                ref="driverComponentTable" row-key="ID" :show-header="false">
+                <el-table-column :show-overflow-tooltip="true" prop="Component" :label="i18ns.upgradePlan.upgradePlan_component"></el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="Model" :label="i18ns.upgradePlan.upgradePlan_Model"></el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="Manufacturer" :label="i18ns.upgradePlan.upgradePlan_manufacturer">
+                </el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="InstalledVersion" :label="i18ns.upgradePlan.upgradePlan_currentVersion">
+                </el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="AvilableVersion" :label="i18ns.upgradePlan.upgradePlan_targetVersion">
+                </el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="Severity" :label="i18ns.upgradePlan.upgradePlan_severityS">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.Severity=='Major'" class="Severity-Major">
+                            {{i18ns.upgradePlan.upgradePlan_severityStatus}}</div>
+                        <div v-if="scope.row.Severity=='Unknown'" class="Severity-Unknown">
+                            {{i18ns.upgradePlan.upgradePlan_unkownStatus}}</div>
+                        <div v-if="scope.row.Severity=='Normal'" class="Severity-Normal">
+                            {{i18ns.upgradePlan.upgradePlan_normalStatus}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="RebootRequired" :label="i18ns.upgradePlan.upgradePlan_reboot">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.RebootRequired===true">
+                            {{i18ns.upgradePlan.upgradePlan_yes}}</div>
+                        <div v-if="scope.row.RebootRequired===false">
+                            {{i18ns.upgradePlan.upgradePlan_no}}</div>
+                        <div
+                            v-if="scope.row.RebootRequired===undefined||scope.row.RebootRequired===''||scope.row.RebootRequired===null">
+                            --</div>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                labelWidth: '250px',
+                i18ns: [],
+                FDIp: '',
+                ID: '',
+                FDList: [],
+                loading: false,
+                fullscreenLoading: false,
+                groupDialogVisible: false,
+                active: 0,
+                form: {
+                    Name: '',
+                    Description: '',
+                    Enabled: true
+                },
+                rules: {
+                    Name: {
+                        required: true,
+                        validator: function (rule, value, callback) {
+                            if (value) {
+                                if (!/^[a-zA-Z0-9_\-.\u4e00-\u9fa5]+$/.test(value) || value.length >
+                                    32) {
+                                    return callback(new Error(app.i18ns.common.regExp_userName));
+                                } else
+                                    return callback();
+                            } else {
+                                return callback(new Error(app.i18ns.upgradePackageWarehouse
+                                    .configInfo_inputNotNull));
+                            }
+                        },
+                        trigger: 'blur'
+                    },
+                    Description: {
+                        required: false,
+                        validator: function (rule, value, callback) {
+                            if (value) {
+                                if (value.length > 256) {
+                                    return callback(new Error(app.i18ns.OSDeploy.deploy_descriptionLimit));
+                                } else
+                                    return callback();
+                            } else {
+                                return callback();
+                            }
+                        },
+                        trigger: 'change'
+                    },
+
+                },
+                allGroups: [],
+                targetDevices: [],
+                targetGroups: [],
+                selectedDevices: [],
+                selectedGroups: [],
+                isGroup: false,
+                targetBaselines: [],
+                selectedBaselines: [],
+                selectedBaselinePackages: [],
+                targetPackages: [],
+                selectedPackages: [],
+                isCheckCompleted: false,
+                upgradeReportList: [],
+                selectedUpgradeReportList: [],
+                percentage: 0,
+                weekList: [],
+                monthOptions: [],
+                upgradePolicy: {
+                    ExecutionPolicy: "Immediate",
+                    ScheduledEffectivePeriod: 'week',
+                    weeks: [1],
+                    month: '1',
+                    weeksTime: '00:00:00',
+                    monthTime: '00:00:00',
+                    PeriodParameter: "",
+                    SpecifiedTime: '',
+                    ResetImmediately: '',
+                    EffectPolicy: false
+                },
+                upgradeSwitch: false,
+                oldName: '',
+                //分批
+                batchDevice: [{
+                    list: []
+                }],
+                timeDelay: 0,
+                batchDeviceDialog: false,
+                batchForm: {
+                    num: 1
+                },
+                otherList: [],
+                checkBatchDevice: [],
+                batchDescTit: '',
+                batchDescDialog: false,
+                batchItem: [],
+            },
+            computed: {
+                isDevice: function () {
+                    return this.targetDevices.length > 0;
+                },
+                isBaselines: function () {
+                    return this.targetBaselines.length > 0;
+                },
+                isPackages: function () {
+                    return this.targetPackages.length > 0;
+                }
+            },
+            watch: {
+
+            },
+            created: function () {
+                this.i18ns = getIn18();
+                this.ID = getQueryString('id');
+                this.weekList = [{
+                        title: this.i18ns.upgradePlan.upgradePlan_one,
+                        checked: true,
+                        id: 1
+                    }, {
+                        title: this.i18ns.upgradePlan.upgradePlan_two,
+                        checked: false,
+                        id: 2
+                    }, {
+                        title: this.i18ns.upgradePlan.upgradePlan_three,
+                        checked: false,
+                        id: 3
+                    },
+                    {
+                        title: this.i18ns.upgradePlan.upgradePlan_four,
+                        checked: false,
+                        id: 4
+                    },
+                    {
+                        title: this.i18ns.upgradePlan.upgradePlan_five,
+                        checked: false,
+                        id: 5
+                    },
+                    {
+                        title: this.i18ns.upgradePlan.upgradePlan_six,
+                        checked: false,
+                        id: 6
+                    },
+                    {
+                        title: this.i18ns.upgradePlan.upgradePlan_seven,
+                        checked: false,
+                        id: 0
+                    }
+                ];
+                var monthLabel = this.i18ns.upgradePlan.upgradePlan_monthDate;
+                for (var i = 1; i < monthLabel.length + 1; i++) {
+                    this.monthOptions.push({
+                        value: i + '',
+                        label: monthLabel[i - 1]
+                    });
+                }
+            },
+            mounted: function () {
+                var that = this;
+                //获取FD列表数据
+                setTimeout(function () {
+                    getFDList(that.bindFD);
+                }, 0);
+                document.onkeydown = function (e) {
+                    var key = window.event.keyCode;
+                    if (key == '13') {
+                        if (that.Baselineisible) {
+                            var value = parseInt($('.pageInfo2 .is-in-pagination .el-input__inner')
+                                .val());
+                            that.pageInfo2HandleCurrentChange(value);
+                        }
+                        if (that.UpgradePackageisible) {
+                            var value = parseInt($('.pageInfo1 .is-in-pagination .el-input__inner')
+                                .val());
+                            that.pageInfo1HandleCurrentChange(value);
+                        }
+                    }
+                }
+
+
+
+            },
+            methods: {
+                /**
+                 * 获取单个的详情
+                 */
+                getItemDetail: function () {
+                    this.emptyText = this.i18ns.common.loading;
+                    upgradePackageManage.getUpgradePlanById({
+                        ip: this.FDIp,
+                        id: this.ID
+                    }, function (ret) {
+                        app.editLoading = false;
+                        app.emptyText = app.i18ns.common.noData;
+                        if (ret.code == '0') {
+                            var obj = ret.data[0].data;
+                            app.oldName = obj.Name;
+                            app.form = {
+                                Name: obj.Name,
+                                Description: obj.Description,
+                                Enabled: obj.Status == 'Enable' ? true : false
+                            };
+                            if (obj.DeviceGroupIDs === null || obj.DeviceGroupIDs ===
+                                undefined || obj.DeviceGroupIDs.length == 0) { //升级的是设备
+                                var servers = [];
+                                for (var j = 0; j < obj.TaskFlow.length; j++) {
+                                    if (obj.TaskFlow[j].Devices) {
+                                        for (var i = 0; i < obj.TaskFlow[j].Devices
+                                            .length; i++) {
+                                            var item = obj.TaskFlow[j].Devices[i];
+                                            var server = item.Server;
+                                            server["Type"] = item.Type;
+                                            server["Group"] = item.Groups && item.Groups.join(',');
+                                            servers.push(server);
+                                        }
+                                    }
+                                }
+                                app.addTargetDevices(servers);
+
+                            } else { //升级的是组
+                                app.targetGroups = _.filter(app.allGroups, function (x) {
+                                    return _.findIndex(obj.DeviceGroupIDs, function (
+                                        y) {
+                                        return y == (x.id + '');
+                                    }) > -1;
+                                });
+                                app.isGroup = true;
+                                setTimeout(function () {
+                                    app.$refs["target-group"].init(app.FDIp, app
+                                        .targetGroups,
+                                        app.targetGroups);
+                                    app.selectedGroups = JSON.parse(JSON.stringify(app
+                                        .targetGroups));
+                                }, 0);
+                            }
+                            if (obj.TaskFlow.length > 1) { //分批升级
+                                _.each(obj.TaskFlow, function (item) {
+                                    var obj = {
+                                        timeDelay: item.BatchInterval > 0 ? item
+                                            .BatchInterval / 60 : 0,
+                                        list: item.GroupDeviceInfos ? item
+                                            .GroupDeviceInfos : item.Devices
+                                    }
+                                    app.batchDevice.push(obj);
+                                })
+                                app.upgradeSwitch = true;
+                            }
+                            if (obj.VersionType == 'Baseline') {
+                                app.addTargetBaselines(obj.BaselineInfo);
+                            } else {
+                                app.addTargetPackages(obj.Packages);
+                            }
+                            if (obj.ExecutionPolicy == 'Period') {
+                                app.upgradePolicy.ExecutionPolicy = 'Later'
+                                var timeWeek = obj.PeriodParameter.split(' ');
+                                if (timeWeek[timeWeek.length - 1] !== '*') {
+                                    app.upgradePolicy.ScheduledEffectivePeriod = 'week';
+                                    app.upgradePolicy.weeksTime = timeWeek[2] + ':' + timeWeek[1] +
+                                        ':' + timeWeek[0];
+                                    var wk = obj.PeriodParameter.split('*')[2]
+                                        .split(' ')[1];
+                                    _.each(wk, function (list) {
+                                        _.each(app.weekList, function (week) {
+                                            if (parseInt(list) === week.id) {
+                                                app.upgradePolicy.weeks.push(week
+                                                    .id);
+                                            }
+                                        })
+                                    });
+                                } else {
+                                    app.upgradePolicy.ScheduledEffectivePeriod = 'month';
+                                    app.upgradePolicy.monthTime = timeWeek[2] + ':' + timeWeek[1] +
+                                        ':' + timeWeek[0];
+                                    app.upgradePolicy.month = timeWeek[3];
+                                }
+                            } else if (obj.ExecutionPolicy == 'SpecifiedTime') { //指定时间
+                                app.upgradePolicy.ExecutionPolicy = 'Later'
+                                app.upgradePolicy.ScheduledEffectivePeriod = 'specifiedTime';
+                                app.upgradePolicy.SpecifiedTime = new Date(getDate(parseTime(obj
+                                    .SpecifiedTime)));
+                                console.log(app.upgradePolicy.SpecifiedTime);
+                            } else {
+                                app.upgradePolicy.ExecutionPolicy = 'Immediate'
+                            }
+                            app.upgradePolicy.EffectPolicy = obj.ResetImmediately;
+
+                        } else {
+                            if (ret.ip != app.FDIp) {
+                                return false
+                            }
+                            var msg = getErrorMsg(ret);
+                            alertMsg(msg);
+                        }
+                    });
+                },
+
+                submit: function () {
+                    if (this.upgradePolicy.ExecutionPolicy == 'Later' && this.upgradePolicy
+                        .ScheduledEffectivePeriod == 'week' && this.upgradePolicy.weeks
+                        .length == 0) {
+                        app.$message({
+                            message: app.i18ns.upgradePlan
+                                .upgradePlan_periodWeek,
+                            type: 'error'
+                        });
+                        return false;
+                    }
+                    var params = {
+                        "Name": this.form.Name,
+                        "Description": this.form.Description,
+                        "ExecutionPolicy": "",
+                        "PeriodParameter": "",
+                        "Enabled": this.form.Enabled,
+                        "SpecifiedTime": "",
+                        "ResetImmediately": '',
+                        "VersionType": this.isPackages ? "UpgradePackage" : "Baseline",
+                        "BaselineInfo": {},
+                        "PackageInfos": [],
+                        "DeviceGroupIDs": [],
+                        "TaskFlow": [],
+                        "EnclosureInfo": [],
+                        "ServerInfo": []
+                    };
+                    params.ServerInfo = _.map(app.selectedUpgradeReportList, function (x) {
+                        return {
+                            ServerID: x.Server.ID,
+                            ModulesInfo: _.map(_.filter(x.Server.Components, {
+                                'isSelected': true
+                            }), function (m) {
+                                return {
+                                    "DeviceID": m.ID,
+                                    "Version": m.InstalledVersion,
+                                    "TargetPackageName": m.TargetPackageName,
+                                    "UpgradeableStatus": m.UpgradeableStatus,
+                                    "DriverInfo": [{
+                                        "DeviceID": "",
+                                        "Version": "",
+                                        "TargetPackageName": "",
+                                        "UpgradeableStatus": ""
+                                    }]
+                                }
+                            })
+                        }
+                    })
+                    params.ServerInfo = _.filter(params.ServerInfo, function (x) {
+                        return x.ModulesInfo.length > 0
+                    })
+                    var devicesIds = _.map(params.ServerInfo, function (x) {
+                        return x.ServerID;
+                    });
+                    if (app.upgradeSwitch) { //开启了分批升级
+                        if (app.batchDevice.length < 2) {
+                            app.$message({
+                                message: app.i18ns.upgradePlan
+                                    .upgradePlan_addImportDeviceTip,
+                                type: 'error'
+                            });
+                            return false;
+                        }
+                        //这里
+                        _.each(app.batchDevice, function (item, index) {
+                            var itemDevicesIds = []
+                            _.each(item.list, function (x) {
+                                itemDevicesIds.push(x.Server.ID);
+                            });
+                            params.TaskFlow.push({
+                                "FlowNumber": index + 1,
+                                "DeviceIDs": app.isDevice ? itemDevicesIds : [],
+                                "GroupDeviceIDs": app.isGroup ? itemDevicesIds : [],
+                                "BatchInterval": item.timeDelay ? item.timeDelay * 60 : 0
+                            })
+                        })
+                    } else {
+                        params.TaskFlow = [{
+                            "FlowNumber": 1,
+                            "DeviceIDs": this.isDevice ? devicesIds : [],
+                            "GroupDeviceIDs": this.isGroup ? devicesIds : [],
+                            "BatchInterval": 0
+                        }]
+                    }
+                    if (this.upgradePolicy.ExecutionPolicy == 'Later') { //稍后执行
+
+                        if (this.upgradePolicy.ScheduledEffectivePeriod == 'week') {
+                            params.ExecutionPolicy = 'Period';
+                            var timeSecond = this.upgradePolicy.weeksTime.split(':').reverse().join(' ');
+                            var timeWeek = this.upgradePolicy.weeks.join(',');
+                            params.PeriodParameter = timeSecond + ' ' + "*" + ' ' + "*" + ' ' + timeWeek;
+                        } else if (this.upgradePolicy.ScheduledEffectivePeriod == 'month') {
+                            params.ExecutionPolicy = 'Period';
+                            var monthSecond = this.upgradePolicy.monthTime.split(':').reverse().join(' ');
+                            params.PeriodParameter = monthSecond + ' ' + this.upgradePolicy.month + ' ' +
+                                "*" + ' ' + "*";
+                        } else {
+                            params.ExecutionPolicy = 'SpecifiedTime';
+                            params.SpecifiedTime = this.upgradePolicy.SpecifiedTime;
+                            var oldDate = sessionStorage.getItem('serverDate1');
+                            var difference = (Date.parse(params.SpecifiedTime) - Date.parse(
+                                (oldDate.replace(/-/g, "/")))) / 1000;
+                            if (difference >= 60) {
+                                params.SpecifiedTime = parseTime(params.SpecifiedTime);
+                            } else {
+                                app.$message({
+                                    message: app.i18ns.upgradePlan.upgradePlan_differenceTip.format(
+                                        parseTime(oldDate)),
+                                    type: 'error'
+                                });
+                                return false;
+                            }
+                        }
+                    } else {
+                        params.ExecutionPolicy = "Immediate";
+                    }
+                    params.ResetImmediately = this.upgradePolicy.EffectPolicy;
+                    params.DeviceGroupIDs = _.map(this.selectedGroups, function (x) {
+                        return x.id + '';
+                    });
+                    if (this.isPackages) {
+                        params.PackageInfos = _.map(app.selectedPackages, function (x) {
+                            return {
+                                PackageID: x.UUID,
+                                Module: _.map(x.Version, function (m) {
+                                    return m.Module;
+                                })
+                            }
+                        });
+                    } else {
+                        params.BaselineInfo = {
+                            BaselineID: app.selectedBaselines[0].UUID,
+                            FirmwarePackages: _.map(app.selectedBaselinePackages, function (x) {
+                                return {
+                                    PackageName: x.PackageName,
+                                    ProductType: x.SupportModel,
+                                    Module: _.map(x.Version, function (m) {
+                                        return m.Module;
+                                    })
+                                }
+                            })
+                        }
+                    }
+                    console.log(params);
+
+                    if (params.Enabled && params.ExecutionPolicy == 'Immediate') {
+                        var tips = "";
+                        var warnCommonTip = "";
+                        var type = 'info';
+                        var title = app.i18ns.common.prompt;
+                        if (params.ResetImmediately) {
+                            tips = this.i18ns.upgradePlan.upgradePlan_warnTipFirst.format(
+                                this.i18ns.upgradePlan.upgradePlan_quickUpgradetips);
+                            warnCommonTip = this.i18ns.upgradePlan.upgradePlan_activeImedEffectTip;
+                            type = 'warning';
+                            title = app.i18ns.common.warn;
+                        } else {
+                            tips = this.i18ns.upgradePlan.upgradePlan_warnTipThree.format(
+                                this.i18ns.upgradePlan.upgradePlan_quickUpgradetips);
+                            warnCommonTip = this.i18ns.upgradePlan.upgradePlan_ImedAfterEffectTip;
+                        }
+                        this.$confirm(tips +
+                            '<br /><span style="color:#999;">' +
+                            warnCommonTip + '</span>',
+                            title, {
+                                dangerouslyUseHTMLString: true,
+                                confirmButtonText: app.i18ns.common.confirm,
+                                cancelButtonText: app.i18ns.common.cancel,
+                                closeOnClickModal: false,
+                                type: type
+                            }).then(function () {
+                            app.sumbitPlan(params);
+                        }).catch(function () {})
+                    } else {
+                        if (params.ResetImmediately) {
+                            var exedate = app.getPlanTime(params);
+                            var tips = app.i18ns.upgradePlan.upgradePlan_warnTipFirst.format(exedate);
+                            var warnCommonTip = app.i18ns.upgradePlan.upgradePlan_activeEffectTip;
+                            this.$confirm(tips +
+                                '<br /><span style="color:#999;">' +
+                                warnCommonTip + '</span>',
+                                app.i18ns.common.warn, {
+                                    dangerouslyUseHTMLString: true,
+                                    confirmButtonText: app.i18ns.common.confirm,
+                                    cancelButtonText: app.i18ns.common.cancel,
+                                    closeOnClickModal: false,
+                                    type: 'warning'
+                                }).then(function () {
+                                app.sumbitPlan(params);
+                            }).catch(function () {})
+                        } else {
+                            this.sumbitPlan(params);
+                        }
+                    }
+                },
+                sumbitPlan: function (params) {
+                    this.fullscreenLoading = true;
+                    upgradePackageManage.updateUpgradePlanById({
+                        ip: this.FDIp,
+                        id: this.ID,
+                        data: params
+                    }, function (ret) {
+                        app.fullscreenLoading = false;
+                        if (ret.code == '0') {
+                            window.location.href = './index.html';
+                        } else {
+                            if (ret.ip != app.FDIp) {
+                                return false
+                            }
+                            var msg = getErrorMsg(ret);
+                            alertMsg(msg);
+                        }
+                    });
+                },
+                nextClick: function (num) {
+                    if (num == 0) {
+                        this.$refs['form'].validate(function (valid) {
+                            if (valid) {
+                                if (app.oldName != app.form.Name) {
+                                    upgradePackageManage.checkPlanName({
+                                        ip: app.FDIp,
+                                        data: {
+                                            PlanName: app.form.Name
+                                        }
+                                    }, function (ret) {
+                                        if (ret.code == '0') {
+                                            if (ret.data[0].data.PlanName) {
+                                                app.active = 1;
+                                            } else {
+                                                app.$message({
+                                                    message: app.i18ns
+                                                        .upgradePlan
+                                                        .upgradePlan_nameRepeatTip,
+                                                    type: 'error'
+                                                });
+                                            }
+                                        } else {
+                                            app.$message({
+                                                message: app.i18ns.upgradePlan
+                                                    .upgradePlan_nameRepeatCheck,
+                                                type: 'error'
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    app.active = 1;
+                                }
+                            } else {
+
+                                return false;
+                            }
+                        });
+                    } else if (num == 1) {
+                        app.percentage = 0;
+                        app.active = 2;
+                        var DeviceIDs = _.map(app.selectedDevices, function (x) {
+                            return x.ID
+                        });
+                        var GroupIDs = _.map(app.selectedGroups, function (x) {
+                            return x.id.toString();
+                        });
+                        var PackageInfos = _.map(app.selectedPackages, function (x) {
+                            return {
+                                PackageID: x.UUID,
+                                Module: _.map(x.Version, function (m) {
+                                    return m.Module;
+                                })
+                            }
+                        });
+                        var BaselineInfo = {};
+                        var VersionType = '';
+                        if (this.isPackages) {
+                            VersionType = 'UpgradePackage';
+                        } else {
+                            VersionType = 'Baseline';
+                            BaselineInfo = {
+                                BaselineID: app.selectedBaselines[0].UUID,
+                                FirmwarePackages: _.map(app.selectedBaselinePackages,
+                                    function (x) {
+                                        return {
+                                            PackageName: x.PackageName,
+                                            Module: _.map(x.Version, function (m) {
+                                                return m.Module;
+                                            })
+                                        }
+                                    })
+                            }
+                        }
+                        var param = {
+                            ip: app.FDIp,
+                            data: {
+                                DeviceIDs: DeviceIDs,
+                                GroupIDs: GroupIDs,
+                                PackageInfos: PackageInfos,
+                                BaselineInfo: BaselineInfo,
+                                VersionType: VersionType
+                            }
+                        };
+                        if (JSON.stringify(app.oldDeviceFirmware) != JSON.stringify(param.data)) {
+                            app.oldDeviceFirmware = param.data;
+                            app.isCheckCompleted = false;
+                        }
+                        if (!this.isCheckCompleted) {
+                            upgradePackageManage.checkDeviceFirmware(param, function (ret) {
+                                if (ret.code == '0') {
+                                    var taskId = ret.data[0].data.TaskID;
+                                    app.getTaskInfo(taskId);
+
+                                } else {
+                                    var msg = getErrorMsg(ret);
+                                    alertMsg(msg);
+                                }
+                            });
+                        }
+
+
+                    } else if (num == 2) {
+                        var selectedUpgradeReports = this.$refs['upgrade-report'].submit();
+                        if (selectedUpgradeReports.length == 0 && this.isDevice) {
+                            app.$message({
+                                message: app.i18ns.upgradePlan
+                                    .upgradePlan_pleaseSelectDevice,
+                                type: 'warning'
+                            });
+                        } else {
+                            this.selectedUpgradeReportList = selectedUpgradeReports;
+                            if (!this.upgradePolicy.SpecifiedTime) {
+                                this.upgradePolicy.SpecifiedTime = getDate(sessionStorage.getItem(
+                                    'serverDate'));
+                            }
+                            this.active = 3;
+                            if (this.selectedUpgradeReportList.length == 0) {
+                                this.upgradePolicy.ExecutionPolicy = 'Later';
+                            }
+                            this.checkChangeBatchDevice();
+                        }
+                    }
+                },
+                getDate: function (str) { //解决new Date()IE10不支持参数
+                    //首先将日期分隔 ，获取到日期部分 和 时间部分
+                    var day = str.split(' ');
+                    //获取日期部分的年月日
+                    var days = day[0].split('-');
+                    //获取时间部分的 时分秒
+                    var mi = day[day.length - 1].split(':');
+                    //获取当前date类型日期
+                    var date = new Date();
+                    //给date赋值  年月日
+                    date.setUTCFullYear(days[0], days[1] - 1, days[2]);
+                    //给date赋值 时分秒  首先转换utc时区 ：+8
+                    date.setUTCHours(mi[0] - 8, mi[1], mi[2]);
+                    return date;
+                },
+                getTaskInfo: function (taskId) {
+                    upgradePackageManage.getTaskInfo({
+                        ip: app.FDIp,
+                        id: taskId
+                    }, function (ret) {
+                        if (ret.code == '0') {
+                            if (ret.data[0].data.Status == 'Finish') {
+                                var data = ret.data[0].data.TaskExInfo.DeviceFirmwareInfos
+                                    .Members;
+                                if (data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        data[i]['MINSPVersion'] = ret.data[0].data
+                                            .TaskExInfo.DeviceFirmwareInfos.MINSPVersion;
+                                        data[i]['MINBMCVersionForSPUpgrade'] = ret.data[0]
+                                            .data.TaskExInfo.DeviceFirmwareInfos
+                                            .MINBMCVersionForSPUpgrade;
+                                        var disabled = true;
+                                        var isIndeterminate = false;
+                                        var isSelected = false;
+                                        for (var k = 0; k < data[i].Server
+                                            .Components
+                                            .length; k++) {
+                                            if (_.filter(data[i].Server.Components, {
+                                                    Component: 'BackupBMC'
+                                                }).length > 0 && _.filter(data[i].Server
+                                                    .Components, {
+                                                        Component: 'BackupBMC'
+                                                    })[0].UpgradeableStatus == 'CanUpgrade' &&
+                                                _.filter(data[i].Server.Components, {
+                                                    Component: 'ActiveBMC'
+                                                }).length > 0 && _.filter(data[i].Server
+                                                    .Components, {
+                                                        Component: 'ActiveBMC'
+                                                    })[0].UpgradeableStatus == 'CanUpgrade'
+                                            ) {
+                                                _.filter(data[i].Server.Components, {
+                                                    Component: 'BackupBMC'
+                                                })[0].UpgradeableStatus = 'BackupBMC';
+                                            }
+                                            data[i].Server.Components[k]['sort'] = app
+                                                .componentSort(data[i]
+                                                    .Server.Components[k]);
+                                            if (data[i].Server.Components[k].UpgradeableStatus ==
+                                                'CanUpgrade' || data[i].Server.Components[k]
+                                                .UpgradeableStatus ==
+                                                'DriverCanUpgrade' || data[i].Server.Components[k]
+                                                .UpgradeableStatus ==
+                                                'SPCanUpgrade') {
+                                                data[i].Server.Components[k]['checkboxDisabled'] =
+                                                    false;
+                                                data[i].Server.Components[k]['isSelected'] = true;
+                                                data[i].Server.Components[k]['checkboxTips'] = '';
+                                                disabled = false;
+                                                isSelected = true;
+                                            } else if (data[i].Server.Components[k]
+                                                .UpgradeableStatus ==
+                                                'CanUpgradeAndNeedUpgradeSP' || data[i].Server
+                                                .Components[k].UpgradeableStatus ==
+                                                'NoMatchingDriverPackageAndNeedUpgradeSP' || data[i]
+                                                .Server.Components[k].UpgradeableStatus ==
+                                                'SameVersion' || data[i].Server.Components[k]
+                                                .UpgradeableStatus ==
+                                                'NoMatchingDriverPackage' || data[i].Server
+                                                .Components[
+                                                    k].UpgradeableStatus ==
+                                                'NoMatchingDriverPackageAndNoMatchingComponentPackage' ||
+                                                data[i].Server.Components[k]
+                                                .UpgradeableStatus ==
+                                                'NoMatchingComponentPackage') {
+                                                data[i].Server.Components[k]['checkboxDisabled'] =
+                                                    false;
+                                                data[i].Server.Components[k]['isSelected'] = false;
+                                                data[i].Server.Components[k]['checkboxTips'] = app
+                                                    .componentCheckBoxTip(data[i].Server
+                                                        .Components[k],
+                                                        data[i].MINSPVersion, data[i]
+                                                        .MINBMCVersionForSPUpgrade);
+                                                disabled = false;
+                                                isIndeterminate = true;
+                                            } else {
+                                                data[i].Server.Components[k][
+                                                    'checkboxDisabled'
+                                                ] = true;
+                                                data[i].Server.Components[k]['isSelected'] =
+                                                    false;
+                                                data[i].Server.Components[k]['checkboxTips'] =
+                                                    app
+                                                    .componentCheckBoxTip(data[i].Server
+                                                        .Components[k],
+                                                        data[i].MINSPVersion, data[i]
+                                                        .MINBMCVersionForSPUpgrade);
+                                            }
+                                        }
+                                        data[i]['checkboxDisabled'] = disabled;
+                                        data[i]['isSelected'] = isSelected;
+                                        data[i]['isIndeterminate'] = (isIndeterminate &&
+                                            isSelected);
+                                        data[i].Server.Components = _.orderBy(data[i].Server
+                                            .Components, [
+                                                'sort'
+                                            ], ['asc']);
+                                    }
+                                    app.isCheckCompleted = true;
+                                    app.upgradeReportList = data;
+                                    app.$refs["upgrade-report"].setDataList(app
+                                        .upgradeReportList);
+                                } else {
+                                    app.isCheckCompleted = true;
+                                    app.upgradeReportList = [];
+                                    app.$refs["upgrade-report"].setDataList(app
+                                        .upgradeReportList);
+                                }
+                            } else {
+                                app.percentage = ret.data[0].data.Progress;
+                                app.getTaskInfo(taskId);
+                            }
+                        } else {
+                            var msg = getErrorMsg(ret);
+                            alertMsg(msg);
+                        }
+                    });
+                },
+
+                openChoiceDevicesDialog: function () {
+                    this.$refs["choice-devices"].openDialog(this.FDIp, this.targetDevices);
+                },
+
+                openChoiceBaselinesDialog: function () {
+                    this.$refs["choice-baselines"].openDialog(this.FDIp, this.targetBaselines
+                        .length > 0 ?
+                        this.targetBaselines[0] : {});
+                },
+                openChoicePackagesDialog: function () {
+                    this.$refs["choice-packages"].openDialog(this.FDIp, this.targetPackages);
+                },
+                /**
+                 * 将设备添加到目标设备列表
+                 * **/
+                addTargetDevices: function (list) {
+                    this.isGroup = false;
+                    this.targetDevices = list;
+                    this.selectedDevices = list;
+                    this.targetGroups = [];
+                    this.$refs["target-devices"].setDataList(list, true);
+                },
+                /**
+                 * 将基线添加到目标版本
+                 * **/
+                addTargetBaselines: function (obj) {
+                    this.targetBaselines = [obj];
+                    this.selectedBaselines = [obj];
+                    this.selectedBaselinePackages = JSON.parse(JSON.stringify(this.targetBaselines[0]
+                        .FirmwarePackages));
+                    this.$refs["target-baselines"].setDataList(this.targetBaselines, this
+                        .targetBaselines[
+                            0].FirmwarePackages);
+                    this.targetPackages = [];
+                },
+                /**
+                 * 将升级包添加到目标版本
+                 * **/
+                addTargetPackages: function (list) {
+                    this.targetPackages = list;
+                    this.selectedPackages = list;
+                    this.targetBaselines = [];
+                    this.selectedBaselines = [];
+                    this.$refs["target-packages"].setDataList(this.targetPackages, true);
+                },
+                /**
+                 * 选择目标设备
+                 * **/
+                choiceTargetDevices: function (list) {
+                    this.selectedDevices = list;
+                },
+
+                /**
+                 * 目标基线内包选择
+                 * **/
+                choiceTargetBaselinePackages: function (list) {
+                    this.selectedBaselinePackages = list;
+                    console.log(this.selectedBaselinePackages, ' this.selectedBaselinePackages');
+                },
+
+                /**
+                 * 目标包内包选择
+                 * **/
+                choiceTargetPackages: function (list) {
+                    this.selectedPackages = list;
+                    console.log(this.selectedPackages, ' this.selectedPackages');
+                },
+
+                /**
+                 * 删除设备或者设备组
+                 * **/
+                deleteData: function () {
+                    if (this.isDevice) {
+                        for (var i = 0; i < this.selectedDevices.length; i++) {
+                            var index = this.targetDevices.findIndex(function (x) {
+                                return x.ID == app.selectedDevices[i].ID;
+                            })
+                            this.targetDevices.splice(index, 1)
+                        }
+                        this.$refs["target-devices"].setDataList(this.targetDevices, false);
+                    }
+                    if (this.isGroup) {
+                        for (var i = 0; i < this.selectedGroups.length; i++) {
+                            var index = this.targetGroups.findIndex(function (x) {
+                                return x.name == app.selectedGroups[i].name;
+                            })
+                            this.targetGroups.splice(index, 1)
+                        }
+                        this.selectedGroups = [];
+                        this.$refs["target-group"].clearDataList();
+                        this.$refs["target-group"].resetChecked();
+                        if (this.targetGroups.length == 0) {
+                            this.isGroup = false;
+                        }
+
+                    }
+                },
+                /**
+                 * 删除包或者基线
+                 * **/
+                deletePackageData: function () {
+                    if (this.isBaselines) {
+                        this.selectedBaselines = [];
+                        this.targetBaselines = [];
+                        this.selectedBaselinePackages = [];
+                    }
+                    if (this.isPackages) {
+                        for (var i = 0; i < this.selectedPackages.length; i++) {
+                            var index = this.targetPackages.findIndex(function (x) {
+                                return x.UUID == app.selectedPackages[i].UUID;
+                            })
+                            this.targetPackages.splice(index, 1)
+                        }
+                        this.$refs["target-packages"].setDataList(this.targetPackages, false);
+                    }
+                },
+
+                //打开设备组
+                openGroupDialog: function () {
+                    this.groupDialogVisible = true;
+                    upgradePackageManage.getAllGRoupList({
+                        ip: this.FDIp
+                    }, function (ret) {
+                        if (ret.code == '0') {
+                            if (ret.data[0].data.Groups) {
+                                var groups = _.map(ret.data[0].data.Groups, function (x) {
+                                    return {
+                                        id: x.ID,
+                                        name: x.Name
+                                    }
+                                });
+                                groups = _.filter(groups, function (x) {
+                                    return x.id > 0;
+                                });
+                                app.checkGroup(groups)
+                            }
+                        }
+                    });
+                },
+                /**
+                 * 获取全部分组
+                 */
+                getAllGRoupList: function () {
+                    upgradePackageManage.getAllGRoupList({
+                        ip: this.FDIp
+                    }, function (ret) {
+                        if (ret.code == '0') {
+                            if (ret.data[0].data.Groups) {
+                                var groups = _.map(ret.data[0].data.Groups, function (x) {
+                                    return {
+                                        id: x.ID,
+                                        name: x.Name
+                                    }
+                                });
+                                app.allGroups = groups;
+                                app.getItemDetail();
+                            }
+                        }
+                    });
+                },
+                checkGroup: function (groups) {
+                    upgradePackageManage.checkGeoup({
+                        ip: this.FDIp,
+                        data: {
+                            GroupIDs: _.map(groups, function (x) {
+                                return x.id + '';
+                            })
+                        }
+                    }, function (ret) {
+                        if (ret.code == '0') {
+                            if (ret.data[0].data.EnableGroupIDs && ret.data[0].data.EnableGroupIDs
+                                .length > 0) {
+                                var ids = ret.data[0].data.EnableGroupIDs;
+                                /*   var arrays = _.filter(groups, function (x) {
+                                      return _.findIndex(ids, function (y) {
+                                          return y == (x.id + '')
+                                      }) > -1;
+                                  })
+                                app.allGroups = arrays; */
+                                app.allGroups = groups;
+                                app.$refs["devices-group"].init(app.FDIp, groups,
+                                    app.targetGroups, ids);
+                            } else {
+                                app.allGroups = [];
+                                app.$refs["devices-group"].init(app.FDIp, [],
+                                    [], []);
+                            }
+                        }
+                    });
+                },
+                closeGroupDialog: function () {
+                    app.$refs["devices-group"].resetChecked();
+                },
+
+                //选择设备组
+                choiceGroup: function () {
+                    this.targetGroups = this.$refs["devices-group"].selectedGroups;
+                    this.selectedGroups = JSON.parse(JSON.stringify(this.targetGroups));
+                    this.groupDialogVisible = false;
+                    this.isDevice = false;
+                    if (this.targetGroups.length > 0) {
+                        this.$refs["target-group"].init(this.FDIp, this.targetGroups,
+                            this.targetGroups);
+                        this.isGroup = true;
+                    } else {
+                        this.$refs["target-group"].init(this.FDIp, [],
+                            []);
+                        this.isGroup = false;
+                    }
+                },
+
+                //目标设备组 组变化时
+                targetGroupNodeCheck: function (list) {
+                    this.selectedGroups = list;
+                },
+
+                /**
+                 * 获取FD数据 回调函数
+                 * @param {any} ret 
+                 */
+                bindFD: function (ret) {
+                    if (ret.code == '0') {
+                        var lg = ret.data.length;
+                        if (lg > 0) {
+                            var data = ret.data;
+                            for (var i = 0; i < data.length; i++) {
+                                this.FDList.push({
+                                    label: data[i].aliasName || data[i].hostIp,
+                                    value: data[i].hostIp
+                                });
+                            }
+                            var currentFD = getCurrentFD();
+                            if (currentFD) {
+                                var _currentFD = _.find(this.FDList, {
+                                    value: currentFD
+                                })
+                                if (_currentFD) {
+                                    this.FDIp = currentFD;
+                                } else {
+                                    setCurrentFD(ret.data[0].hostIp);
+                                    this.FDIp = ret.data[0].hostIp;
+                                }
+                            } else {
+                                setCurrentFD(ret.data[0].hostIp);
+                                this.FDIp = ret.data[0].hostIp;
+                            }
+                            app.getAllGRoupList();
+                        } else {
+                            alertMsg(getErrorMsg({
+                                code: '-90002'
+                            }))
+                        }
+                    } else {
+                        var msg = getErrorMsg(ret);
+                        alertMsg(msg);
+                    }
+                },
+                /**
+                 * FD下拉框 点击切换事件
+                 * 
+                 * @param {any} command 
+                 * @param {any} com 
+                 */
+                commandClick: function () {
+                    setCurrentFD(this.FDIp);
+                },
+                /**
+                 * 获取服务器健康状态
+                 **/
+                getServerStatusTxt: function (healthStatus) {
+                    return getServerStatusTxt(healthStatus);
+                },
+
+                componentSort: function (row) {
+                    switch (row.UpgradeableStatus) {
+                        case "NoUpgradePackage":
+                            return 12;
+                        case "BackupBMC":
+                            return 14;
+                        case "SameVersion":
+                            return 11;
+                        case "SPVersionEarlierDefaultVersion":
+                            return 13;
+                        case "NoOSInfo":
+                            return 24;
+                        case "NoSPInfo":
+                            return 25;
+                        case "BMCVersionEarlierDefaultVersion":
+                            return 26;
+                        case "SPCanUpgrade":
+                            return 8;
+                        case "CanUpgradeAndNeedUpgradeSP ":
+                            return 9;
+                        case "NoMatchingDriverPackageAndNeedUpgradeSP":
+                            return 10;
+                        case "NoMatchingDriverPackage":
+                            return 6;
+                        case "NoMatchingDriverPackageAndNoMatchingComponentPackage":
+                            return 7;
+                        case "NoMatchingComponentPackage":
+                            return 5;
+                        case "DriverCanUpgrade":
+                            return 4;
+                        case "NoActive":
+                            return 21;
+                        case "Activing":
+                            return 22;
+                        case "Upgrading":
+                            return 23;
+                        case "CanUpgrade":
+                            return 3;
+                        case "SinglePowerNotAllowUpgrade":
+                            return 15;
+                        case "CurrentPowerTypeNotMatch":
+                            return 16;
+                        case "CurrentPowerSupplyStatusNotSupportUpgrade":
+                            return 17;
+                        case "OtherPowerTypeNotMatch":
+                            return 18;
+                        case "OtherPowerSupplyStatusNotSupportUpgrade":
+                            return 19;
+                        case "DiskRelationRaidNotMatch":
+                            return 20;
+                        case "CannotUpgrade":
+                            return 27;
+                        case "AllComponentsCanUpgrade":
+                            return 1;
+                        case "PartComponentsCanUpgrade":
+                            return 2;
+                    }
+                },
+                componentCheckBoxTip: function (row, minspversion, minbmcversionforspupgrade) {
+                    switch (row.UpgradeableStatus) {
+                        case "NoUpgradePackage":
+                            return this.i18ns.upgradePlan.upgradePlan_noUpgradePackageComponent;
+                        case "BackupBMC":
+                            return this.i18ns.upgradePlan.upgradePlan_backUpBMCComponent;
+                        case "SameVersion":
+                            return this.i18ns.upgradePlan.upgradePlan_sameVersionComponent;
+                        case "SPVersionEarlierDefaultVersion":
+                            return this.i18ns.upgradePlan.upgradePlan_SPVersionComponent.format(
+                                minspversion);
+                        case "BMCVersionEarlierDefaultVersion":
+                            return this.i18ns.upgradePlan.upgradePlan_BMCVersionComponent.format(
+                                minbmcversionforspupgrade);
+                        case "CanUpgradeAndNeedUpgradeSP":
+                            return this.i18ns.upgradePlan.upgradePlan_needUpgradeSPOne.format(
+                                    minspversion) + this.i18ns.upgradePlan
+                                .upgradePlan_needUpgradeSPTwo +
+                                this.i18ns.upgradePlan.upgradePlan_needUpgradeSPThree;
+                        case "NoMatchingDriverPackageAndNeedUpgradeSP":
+                            return this.i18ns.upgradePlan.upgradePlan_noMatchingneedUpgradeSPOne +
+                                this
+                                .i18ns.upgradePlan.upgradePlan_noMatchingneedUpgradeSPTwo.format(
+                                    minspversion) + this.i18ns.upgradePlan
+                                .upgradePlan_noMatchingneedUpgradeSPThree + this.i18ns.upgradePlan
+                                .upgradePlan_noMatchingneedUpgradeSPFour
+                        case "NoSPInfo":
+                            return this.i18ns.upgradePlan.upgradePlan_NoSPInfoComponent;
+                        case "SPCanUpgrade":
+                            return this.i18ns.upgradePlan.upgradePlan_SPCanUpgradeOne + this.i18ns
+                                .upgradePlan.upgradePlan_SPCanUpgradeTwo;
+                        case "NoOSInfo":
+                            return this.i18ns.upgradePlan.upgradePlan_noOSInfoComponent;
+                        case "NoMatchingDriverPackage":
+                            return this.i18ns.upgradePlan.upgradePlan_noMatchingDrive;
+                        case "NoMatchingDriverPackageAndNoMatchingComponentPackage":
+                            return this.i18ns.upgradePlan.upgradePlan_noMatchingDrive;
+                        case "NoMatchingComponentPackage":
+                            return this.i18ns.upgradePlan.upgradePlan_noMatchingComponent;
+                        case "DriverCanUpgrade":
+                            return "";
+                        case "NoActive":
+                            return this.i18ns.upgradePlan.upgradePlan_noActive;
+                        case "Activing":
+                            return this.i18ns.upgradePlan.upgradePlan_activing;
+                        case "Upgrading":
+                            return this.i18ns.upgradePlan.upgradePlan_upgrading;
+                        case "CanUpgrade":
+                            return "";
+                        case "SinglePowerNotAllowUpgrade":
+                            return this.i18ns.upgradePlan.upgradePlan_powerNotSupport;
+                        case "CurrentPowerTypeNotMatch":
+                            return this.i18ns.upgradePlan.upgradePlan_powerTypeNot;
+                        case "CurrentPowerSupplyStatusNotSupportUpgrade":
+                            return this.i18ns.upgradePlan.upgradePlan_powerStatusNot;
+                        case "OtherPowerTypeNotMatch":
+                            return this.i18ns.upgradePlan.upgradePlan_powerTypeOtherNot;
+                        case "OtherPowerSupplyStatusNotSupportUpgrade":
+                            return this.i18ns.upgradePlan.upgradePlan_powerTypeOtherError;
+                        case "DiskRelationRaidNotMatch":
+                            return this.i18ns.upgradePlan.upgradePlan_diskRelationRaidNotMatch;
+                        default:
+                            return "";
+                    }
+                },
+                getPlanTime: function (row) {
+                    switch (row.ExecutionPolicy) {
+                        case 'Immediate':
+                            return this.i18ns.upgradePlan.upgradePlan_immediateExecution;
+                            break;
+                        case 'Period':
+                            var timeWeek = row.PeriodParameter.split(' ');
+                            var showValueWeek = {};
+                            if (timeWeek[timeWeek.length - 1] !== '*') {
+                                showValueWeek = {
+                                    hour: timeWeek[2],
+                                    minute: timeWeek[1],
+                                    second: timeWeek[0]
+                                };
+                                var time = showValueWeek.hour + ':' + showValueWeek.minute + ':' +
+                                    showValueWeek.second;
+                                var weekly = [];
+                                var timeWeekList = row.PeriodParameter.split('*')[2].split(',');
+                                _.each(timeWeekList, function (list) {
+                                    _.each(app.weekList, function (week) {
+                                        if (parseInt(list) == week.id) {
+                                            week.checked = true;
+                                            weekly.push(week.title)
+                                        }
+                                    })
+                                });
+                                var str = weekly.join(this.i18ns.common.comma) + ' ' + time;
+                                return this.i18ns.upgradePlan.upgradePlan_periodWeekTipOne.replace(
+                                    '{0}', str)
+
+                            } else {
+                                var showValue = {
+                                    hour: timeWeek[2],
+                                    minute: timeWeek[1],
+                                    second: timeWeek[0]
+                                };
+                                var time = showValue.hour + ':' + showValue.minute + ':' + showValue
+                                    .second;
+                                var monthTypeText = "";
+                                _.each(this.i18ns.upgradePlan.upgradePlan_monthDate, function (month) {
+                                    if (parseInt(timeWeek[3]) == parseInt(month)) {
+                                        monthTypeText = month;
+                                    }
+                                });
+                                var str = monthTypeText + ' ' + time;
+                                return this.i18ns.upgradePlan.upgradePlan_periodmonthTipOne.replace(
+                                    '{0}', str)
+                            }
+                            break;
+                        case 'SpecifiedTime':
+                            return row.SpecifiedTime + this.i18ns.upgradePlan
+                                .upgradePlan_startUpgrade;
+                            break;
+                    }
+                },
+                back: function () {
+                    this.$confirm('<span><strong>' + app.i18ns.common.routeSkipTip +
+                        '</strong></span></br><span>' + app.i18ns
+                        .common
+                        .routeSkipWarningTip + '</span>', app.i18ns.common.prompt, {
+                            confirmButtonText: app.i18ns.common.yes,
+                            cancelButtonText: app.i18ns.common.no,
+                            type: 'warning',
+                            dangerouslyUseHTMLString: true,
+                            closeOnClickModal: false
+                        }).then(function () {
+                        window.location.href = './index.html?s=' + Math.random();
+                    }).catch(function () {});
+                },
+                /**
+                 * 判断分批的设备是否更改
+                 */
+                checkChangeBatchDevice: function () {
+                    if (this.upgradeSwitch) {
+                        var newDevice = [];
+                        var deviceIDs = _.map(app.selectedUpgradeReportList, function (x) {
+                            return x.Server.ID
+                        })
+                        //分批的设备的ids
+                        _.each(app.batchDevice, function (item) {
+                            var arr = _.map(item.list, function (x) {
+                                return x.Server.ID;
+                            });
+                            newDevice.push({
+                                list: arr
+                            })
+                        })
+                        console.log(newDevice)
+                        var oldDevices = [];
+                        _.each(newDevice, function (item) {
+                            _.each(item.list, function (itemIds) {
+                                oldDevices.push(itemIds)
+                            })
+                        })
+                        console.log('上次分批设备', oldDevices)
+                        var batchDevice = []
+                        _.each(newDevice, function (item, i) {
+                            var obj = {
+                                list: [],
+                                timeDelay: app.batchDevice[i].timeDelay
+                            };
+                            batchDevice.push(obj);
+                            _.each(item.list, function (itemId, k) {
+                                if (deviceIDs.indexOf(itemId) > -1) {
+                                    var listItem = _.filter(app.selectedUpgradeReportList,
+                                        function (params) {
+                                            return params.Server.ID == itemId
+                                        })[0]
+                                    batchDevice[i].list.push(listItem);
+                                }
+                            })
+                        })
+                        console.log('删除后的分批设备', batchDevice)
+                        //新增
+                        _.each(deviceIDs, function (x, i) {
+                            if (_.findIndex(oldDevices, function (y) {
+                                    return y == x
+                                }) < 0) {
+                                var item = app.selectedUpgradeReportList[i]
+                                batchDevice[batchDevice.length - 1].list.push(item)
+                            };
+                        })
+                        var otherArr = [];
+                        _.each(batchDevice, function (item, i) {
+                            if (item.list.length > 0) {
+                                var obj = {
+                                    list: item.list,
+                                    timeDelay: item.timeDelay
+                                };
+                                otherArr.push(obj);
+                            }
+                        })
+                        this.batchDevice = otherArr;
+                        console.log('新的设备', app.batchDevice)
+                    } else {
+                        this.batchDevice = [{
+                            list: this.selectedUpgradeReportList
+                        }];
+                    }
+                },
+                /**
+                 * 分批升级
+                 */
+                showBatch: function (obj) {
+                    this.otherList = obj.list;
+                    this.batchForm.teamName = obj.teamName;
+                    this.batchForm.num = 1;
+                    this.checkBatchDevice = []
+                    this.batchDeviceDialog = true;
+                    Vue.nextTick(function () {
+                        /* app.$refs.inputnum.resetnum('1.0'); */
+                        app.$refs["check-batch-devices"].setDataList(app.otherList);
+                    })
+                },
+                /**
+                 * 分批升级选择设备
+                 */
+                handleSelectBatch: function (val) {
+                    this.checkBatchDevice = val;
+                },
+                /**
+                 * 确定分批添加
+                 */
+                ensureaddBatches: function (list) {
+                    if (this.checkBatchDevice.length == this.otherList.length) {
+                        app.$message({
+                            message: app.i18ns.upgradePlan.upgradePlan_batchUpgrade,
+                            type: 'error'
+                        });
+                        return
+                    }
+                    this.batchDevice.pop()
+                    this.batchDevice.push({
+                        list: this.checkBatchDevice,
+                        timeDelay: this.batchForm.num
+                    })
+                    var arr = _.filter(this.otherList, function (v, i, arr) {
+                        return _.findIndex(app.checkBatchDevice, function (y) {
+                            return y.Server.ID == v.Server.ID
+                        }) < 0
+                    })
+                    if (arr.length > 0) {
+                        this.batchDevice.push({
+                            list: arr
+                        })
+                    }
+                    this.batchDeviceDialog = false;
+                },
+                /**
+                 * 设备中所属组
+                 */
+                getGroupTxt: function (group) {
+                    if (group) {
+                        if (typeof group == 'string') {
+                            return group
+                        } else if (Array.isArray(group)) {
+                            return group.join(',')
+                        } else {
+                            return this.i18ns.upgradePlan.upgradePlan_nullGroup
+                        }
+                    } else {
+                        return this.i18ns.upgradePlan.upgradePlan_nullGroup
+                    }
+                },
+                /**
+                 * 改变时间
+                 */
+                setnum: function (val) {
+                    this.batchForm.num = val;
+                },
+                /**
+                 * 详情
+                 */
+                showDetil: function (data) {
+                    this.batchDescTit = "NO." + (Number(data.index) + 1) + " " + this.i18ns.upgradePlan
+                        .upgradePlan_deviceTableList;
+                    this.batchItem = data.item;
+                    this.batchDescDialog = true;
+                    Vue.nextTick(function () {
+                        app.$refs["batch-devices"].setDataList(data.item);
+                    })
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
