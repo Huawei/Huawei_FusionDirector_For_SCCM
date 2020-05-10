@@ -11,7 +11,7 @@ I. General Information
 
 II. Description
 
-    The SCCM plug-in is a plug-in integrated in the SCCM and used for Huawei server management. It can be used to connect to multiple eSight systems and view the servers managed by FusionDirector.
+    The SCCM plug-in is a plug-in integrated in the SCCM and used for Huawei server management. It can be used to connect to multiple FusionDirector systems and view the servers managed by FusionDirector.
 
 III. Supported Software Version
 
