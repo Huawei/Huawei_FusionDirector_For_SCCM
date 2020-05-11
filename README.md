@@ -1,11 +1,11 @@
 ****************************************************************************
-System Center Configuration Manager Plugin Pack for Huawei Device
+System Center Configuration Manager Plugin Pack for Huawei Server
 ****************************************************************************
 
 I. General Information
 
-    Name:     SCCM Plugin Pack for Huawei Device
-    Category: Monitoring
+    Name:     SCCM Plugin Pack for Huawei Server
+    Category: Configuration
     Version:  1.1.3
 
 
@@ -24,9 +24,9 @@ IV. Software Requirements
 
 V. Supported Device
     
-    Huawei Blade Server: E9000
-    Huawei Rack  Server: RH1288 V3, RH2288H V2, RH2288 V3, RH2288H V3
-    Huawei High-density Server:  X6000, X6800
+    Huawei Blade Server: E9000(MM920)
+    Huawei Rack Server: 1288H V5,2288H V5
+    Huawei Heterogeneous Server: G560,G530 V5,G560 V5
 
 
 VI. Additional Resources
